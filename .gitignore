@@ -1,0 +1,6 @@
+node_modules/
+test-results/
+.vercel/
+dist/
+assets/source-*.html
+assets/contact-sheet.jpg

@@ -1,0 +1,190 @@
+/* Palette and composition derived from the supplied HANA flyer. */
+
+::selection { background: var(--accent); color: var(--on-accent); }
+body { background: var(--bg); color: var(--ink); }
+.topline { background: var(--surface); color: var(--muted); border-bottom: 1px solid var(--line); }
+.site-header, .site-header.is-scrolled { background: var(--bg); border-bottom: 1px solid var(--line); }
+.header-inner { height: 76px; }
+.brand { display: grid; grid-template-columns: 57px auto; column-gap: 12px; align-items: center; }
+.brand .brand-logo { grid-row: 1 / 3; width: 50px; height: 50px; object-fit: cover; border-radius: 50%; }
+.brand>span:not(.sr-only) { color: var(--accent); font-weight: 500; font-size: 38px; letter-spacing: .055em; }
+.brand small { color: var(--ink); margin-top: 2px; font-size: 6.7px; letter-spacing: .14em; }
+.header-inner nav { gap: 21px; }
+.header-inner nav a { color: var(--muted); }
+.header-inner nav a:hover, .header-inner nav a[aria-current] { color: var(--accent); }
+.cart-trigger>img { filter: invert(87%) sepia(29%) saturate(480%) hue-rotate(346deg); }
+.cart-trigger span, .filters button[aria-pressed=true], .mobile-actions button, .skip-link { background: var(--accent); color: var(--on-accent); }
+
+/* A decisive two-part hero keeps the message calm and the food photography clear. */
+.hero.container { position: relative; isolation: isolate; display: grid; grid-template-columns:minmax(560px,44%) minmax(0,56%); width:100%; max-width:none; min-height:clamp(590px,calc(100dvh - 106px),710px); padding:0; gap:0; background:var(--bg); overflow:hidden; }
+.hero-copy { position: relative; z-index: 2; width:auto; display:flex; flex-direction:column; justify-content:center; padding:64px 64px 70px max(48px,calc((100vw - 1280px)/2)); overflow:visible; }
+.hero-copy .eyebrow { color: var(--accent); font-size: 12px; letter-spacing: .035em; text-transform:none; }
+.hero-copy .eyebrow>span { width:32px; }
+.hero h1 { font-size: clamp(58px,4.65vw,78px); line-height: 1.01; letter-spacing: -.025em; margin-top: 25px; max-width:680px; }
+.hero h1 .hero-line { display:block; white-space:nowrap; }
+.hero h1 em { color: var(--accent); }
+.hero-description { color: var(--muted); font-size: 14px; max-width: 390px; line-height: 1.75; margin-top:27px; }
+.hero-actions { margin-top:31px; }
+.hero-visual { position: relative; z-index: 0; inset:auto; min-height:0; margin:0; overflow:hidden; background:var(--surface); }
+.hero-visual>img { object-position: 58% 52%; scale:1.02; }
+.hero-visual:after { content: ''; position: absolute; inset: 0; background:linear-gradient(90deg,var(--bg) 0,oklch(21% .003 67 / .28) 9%,transparent 22%),linear-gradient(0deg,oklch(16% .003 67 / .5),transparent 35%); pointer-events:none; }
+.button, .hero .button, .reservation-section .button, .reservation-booking .button { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+.button:hover, .hero .button:hover, .reservation-section .button:hover, .reservation-booking .button:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--on-accent); }
+.button-outline, .hero .button-outline, .reservation-booking .button-outline { background: transparent; border-color: var(--control-line); color: var(--accent); }
+.button-outline:hover, .hero .button-outline:hover, .reservation-booking .button-outline:hover { background: var(--panel); border-color: var(--accent); color: var(--accent-hover); }
+.visit-strip { padding-block: 25px; }
+.visit-strip .strip-label { color: var(--accent); }
+.open-status { color: var(--muted); border-color: var(--line); }
+.open-status.is-open { color: var(--success); }
+.open-status.is-open:before { background: var(--success); }
+
+.about { padding-block: 100px 120px; }
+.about-detail { rotate: 0deg; border-width: 7px; outline: 1px solid var(--line); }
+.about-seal { rotate: 0deg; color: var(--accent); font-size: 24px; }
+.about-copy p { font-size: 14px; }
+.section-heading h2, .about h2, .order-intro h2, .contact-copy h2 { color: var(--ink); }
+.about h2 em { color: var(--accent); }
+.menu-section { background: var(--surface); border-block: 1px solid var(--line); }
+.menu-section .section-heading { max-width: none; padding-bottom: 26px; border-bottom: 1px solid var(--accent); }
+.menu-section .section-heading h2 { color: var(--accent); font-size: clamp(44px,4.7vw,68px); }
+.menu-section .section-heading .eyebrow { display: none; }
+.menu-tools { gap: 28px; padding-bottom: 12px; }
+.search { max-width: 490px; }
+input, select, textarea { background: var(--bg); color: var(--ink); border-color: var(--control-line); }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
+.filters button { border-color: var(--control-line); color: var(--ink); }
+.filters button:hover { border-color: var(--accent); }
+.categories { background: var(--surface); top: 95px; border-color: var(--line); scrollbar-color: var(--line) var(--surface); gap: 25px; }
+.categories a { color: var(--muted); font-size: 12px; }
+.categories a:hover { color: var(--accent); }
+.menu-category { padding-top: 38px; scroll-margin-top: 195px; }
+.menu-category>h3 { color: var(--accent); display: flex; align-items: center; gap: 16px; font-family: Inter,Arial,sans-serif; font-size: 22px; font-weight: 500; line-height: 1.4; padding-bottom: 15px; margin-bottom: 0; border-bottom: 1px solid var(--line); }
+.menu-category>h3 small { margin-left: auto; color: var(--muted); font-size: 11px; }
+.dish-grid { column-gap: 55px; }
+.dish { border-color: var(--line); padding-block: 23px; }
+.dish h4 { color: var(--accent); font-weight: 500; font-size: 15px; }
+.dish h4 span { color: var(--muted); margin-right: 4px; }
+.dish p { line-height: 1.8; }
+.dish-action strong { color: var(--ink); font-size: 15px; }
+.dish-action .button { background: transparent; color: var(--accent); border-color: var(--control-line); }
+.dish-action .button:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.menu-source-note { font-size: 12px; }
+.legend { border-bottom: 1px solid var(--line); padding-block: 10px; }
+.legend summary { color: var(--accent); display: list-item; padding-top: 10px; }
+.legend p { padding-block: 10px 15px; }
+.order-steps { gap: 55px; }
+.order-steps li>span { color: var(--accent); }
+
+.reservation-section { background: var(--bg); color: var(--ink); border-block: 1px solid var(--line); }
+.reservation-section:before { background: linear-gradient(90deg,oklch(16% .003 67 / .96),oklch(16% .003 67 / .81)); }
+.reservation-inner { gap: 85px; padding-block: 85px; }
+.reservation-inner h2 { font-size: clamp(48px,4.8vw,68px); }
+.reservation-inner p, .reservation-inner .hours span { color: var(--muted); }
+.reservation-inline-hours { border-color: var(--line); }
+.reservation-inline-hours h3 { color: var(--accent); }
+.reservation-booking { background: var(--surface); border: 1px solid var(--line); padding: 35px; }
+.reservation-booking .booking-heading h3 { color: var(--accent); }
+.reservation-booking p, .reservation-booking label { color: var(--ink); }
+.reservation-booking .small, .reservation-booking .booking-heading p { color: var(--muted); }
+.booking-progress [aria-current] { color: var(--accent); }
+.request-message, #order-message { background: var(--panel); color: var(--ink); border: 1px solid var(--line); }
+.reservation-booking .form-error, #form-error { color: var(--error); }
+.reservation-email { color: var(--accent); }
+
+.gallery-section .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 40px; }
+.gallery-section .section-heading p { max-width: 300px; }
+.gallery-item { background: var(--surface); }
+.gallery-item>span { background: var(--accent); color: var(--on-accent); }
+.gallery-item:hover>span { background: var(--accent-hover); }
+.map-panel { background: var(--surface); border-color: var(--line); }
+footer { background: oklch(17% .003 67); border-top: 1px solid var(--line); }
+.footer-main p, .footer-main .hours span, .footer-bottom { color: var(--muted); }
+.footer-bottom { border-color: var(--line); }
+.footer-bottom #motion-toggle { min-height:30px; padding:0; border:0; background:transparent; color:var(--muted); font-size:9px; }
+.footer-bottom #motion-toggle:hover { background:transparent; color:var(--accent); }
+.mobile-actions { background: var(--bg); }
+.cart-dialog { background: var(--surface); border-top: 2px solid var(--accent); }
+.cart-dialog .dialog-header { background: var(--surface); }
+.dialog-header h2, #checkout h3, #order-review h3, .empty-cart h3 { color: var(--accent); }
+.quantity-controls button { border-color: var(--control-line); }
+.quantity-controls button:hover { border-color: var(--accent); background: var(--panel); }
+.cart-total strong, .cart-row-price { color: var(--accent); }
+.lightbox { background: var(--bg); }
+.toast { background: var(--accent); color: var(--on-accent); }
+.legal h1, .legal h2 { color: var(--accent); }
+
+@media(min-width:1600px) { .hero-copy { padding-left: max(80px,calc((100vw - 1280px)/2)); } }
+@media(max-width:1199px) {
+  .header-inner { height: 74px; gap: 15px; }
+  .brand { grid-template-columns: 46px auto; gap: 8px; }
+  .brand .brand-logo { width: 46px; height: 46px; }
+  .brand>span:not(.sr-only) { font-size: 35px; }
+  .brand small { font-size: 5.8px; }
+  .header-inner nav { gap: 15px; }
+  .hero.container { grid-template-columns:minmax(500px,49%) minmax(0,51%); }
+  .hero-copy { padding:60px 36px 64px 32px; }
+  .hero h1 { font-size: clamp(52px,5.25vw,65px); }
+  .categories { top: 75px; }
+  .reservation-inner { gap: 40px; }
+}
+@media(max-width:1023px) {
+  .header-inner { height: 72px; }
+  .header-inner nav { top: 73px; background: var(--bg); }
+  .hero.container { grid-template-columns:minmax(420px,52%) minmax(0,48%); min-height:620px; }
+  .hero-copy { padding:55px 30px 58px 32px; }
+  .hero h1 { font-size:clamp(47px,5.5vw,56px); }
+  .hero-description { max-width: 340px; }
+  .hero-visual:after { background:linear-gradient(90deg,var(--bg),transparent 24%),linear-gradient(0deg,oklch(16% .003 67 / .55),transparent 38%); }
+  .hero-actions { flex-direction: row; }
+  .hero-actions .button { min-width: 0; }
+  .categories { top: 73px; }
+  .reservation-booking { padding: 25px; }
+  .gallery-section .section-heading { align-items: start; flex-direction: column; gap: 0; }
+}
+@media(max-width:767px) {
+  .header-inner { height: 68px; }
+  .header-inner nav { top: 69px; }
+  .brand { grid-template-columns: 44px auto; }
+  .brand .brand-logo { width: 44px; height: 44px; }
+  .brand>span:not(.sr-only) { font-size: 33px; }
+  .topline { font-size: 9px; }
+  .hero.container { min-height:0; display:flex; flex-direction:column; }
+  .hero-copy { width:100%; min-height:430px; padding:38px 20px 40px; }
+  .hero h1 { font-size:clamp(43px,11vw,58px); margin-top:22px; line-height:1.03; }
+  .hero h1 .hero-line { white-space:normal; }
+  .hero-description { max-width: 350px; font-size: 13px; margin-top: 22px; }
+  .hero-actions { margin-top: 24px; }
+  .hero-actions .button { font-size: 11px; padding-inline: 15px; }
+  .hero-visual { position:relative; inset:auto; width:100%; min-height:330px; margin:0; }
+  .hero-visual>img { object-position: 50% 55%; }
+  .hero-visual:after { background:linear-gradient(180deg,var(--bg),transparent 22%,transparent 84%); }
+  .about { padding-block: 65px 75px; }
+  .about-seal { font-size: 22px; }
+  .about-copy p { font-size: 13px; }
+  .menu-section .section-heading h2 { font-size: 46px; }
+  .menu-section .section-heading { padding-bottom: 24px; }
+  .categories { top: 69px; gap: 23px; }
+  .menu-category { padding-top: 30px; scroll-margin-top: 175px; }
+  .menu-category>h3 { font-size: 21px; }
+  .menu-category>h3 small { font-size: 10px; }
+  .dish { padding-block: 22px; }
+  .dish h4 { font-size: 14px; }
+  .dish p { font-size: 12px; }
+  .dish-action strong { font-size: 14px; }
+  .reservation-inner { gap: 32px; padding-block: 60px; }
+  .reservation-inner h2 { font-size: 51px; }
+  .reservation-booking { padding: 25px 20px; }
+  .reservation-booking .booking-heading h3 { font-size: 34px; }
+  .gallery-section .section-heading { gap: 0; }
+  .gallery-section .section-heading h2 { font-size: 43px; }
+  footer .brand { width: max-content; }
+}
+@media(max-width:359px) {
+  .brand { grid-template-columns: 37px auto; gap: 6px; }
+  .brand .brand-logo { width: 37px; height: 37px; }
+  .brand>span:not(.sr-only) { font-size: 29px; }
+  .brand small { font-size: 5px; }
+  .hero-actions .button { padding-inline: 12px; font-size: 10px; }
+  .reservation-booking { padding-inline: 16px; }
+  .reservation-booking .booking-heading h3 { font-size: 30px; }
+}

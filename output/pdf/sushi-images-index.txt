@@ -1,0 +1,54 @@
+DOI CHIEU ANH SUSHI THEO MA MON TREN PDF
+Nguon: assets/menu/speisekarte.pdf
+
+Luu y:
+- 340 la ma mon lon nhat, khong phai tong so mon.
+- Phan sushi co 71 ma mon.
+- Chi 30 ma ben duoi co anh rieng nam cung hang trong PDF.
+
+NIGIRI
+213 - Sake Nigiri
+214 - Maguro Nigiri
+216 - Ebi
+
+TEMAKI
+230 - Sake Temaki
+231 - Ebi Temaki
+232 - Unagi Temaki
+233 - Haehnchen Temaki
+
+HOSO MAKI
+242 - Kappa Maki
+243 - Avocado Maki
+245 - Sake Maki
+248 - Kazumi Maki
+249 - Kani Maki
+
+URAMAKI
+260 - Alasuka Uramaki
+263 - Pirikara Uramaki
+265 - Philadelphia Uramaki
+266 - California
+267 - Tempura
+270 - Tomoko
+
+INSIDE OUT SPECIAL
+280 - Yukiko
+283 - Mono
+284 - Midori
+285 - Ebisu
+
+SUSHI MENU
+330 - Hana
+332 - Tokyo
+333 - Osaka
+335 - Sakura
+336 - Menue Mix Lachs
+338 - Menue Garnelen
+339 - Valentine
+340 - Familie
+
+Anh nen dung chung, khong gan duoc chinh xac cho mot ma mon:
+- Sashimi: 300-302
+- Futo Tempura: 310-315
+- Vegetarisches Sushi: 320-324

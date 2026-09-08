@@ -1,0 +1,22 @@
+<section id="speisekarte" class="menu-section section-space">
+ <div class="container menu-shell">
+  <aside class="menu-aside" aria-labelledby="menu-section-title">
+   <p class="section-note">Immer verfügbar</p>
+   <h2 id="menu-section-title">Speisekarte</h2>
+   <p class="menu-aside-copy">Wählen Sie aus Vorspeisen, Suppen, Bowls, Hauptgerichten, Sushi, Desserts und Getränken.</p>
+   {{PDF}}
+   <div class="menu-service"><span>Zum Mitnehmen</span><p>Abholung im Restaurant<br>Zahlung vor Ort</p></div>
+  </aside>
+  <div class="menu-catalog" id="menu-results">
+   <div class="menu-catalog-heading"><h3>Speisekarte nach Kategorien</h3><span>Frisch zubereitet</span></div>
+   {{MENU_TOOLS}}
+   <div class="menu-category-strip"><p class="sr-only" id="menu-nav-title">Gerichtskategorien</p>{{MENU_NAV}}</div>
+   <div class="menu-results-bar"><p id="search-status" role="status"></p><button type="button" id="reset-menu" class="text-link" hidden>Filter zurücksetzen</button></div>
+   <div id="menu-content">{{MENU}}</div>
+   <div id="no-results" hidden><h3>Heute etwas anderes?</h3><p>Keine passenden Gerichte gefunden. Ändern Sie Ihren Suchbegriff oder setzen Sie die Filter zurück.</p></div>
+   <nav class="menu-pagination" id="menu-pager" aria-label="Menüseiten" hidden><button type="button" id="menu-prev" aria-label="Vorherige Menüseite">←</button><p id="menu-page-status"></p><button type="button" id="menu-next" aria-label="Nächste Menüseite">→</button></nav>
+   <div class="menu-total"><span id="menu-visible-total"></span><button type="button" class="text-link" data-open-cart>Warenkorb ansehen <span data-cart-count>0</span> →</button></div>
+   <div class="menu-information">{{LEGEND}}</div>
+  </div>
+ </div>
+</section>
