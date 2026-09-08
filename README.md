@@ -22,11 +22,11 @@ The interface uses the charcoal/champagne-gold/ivory palette of the supplied PDF
 
 The supplied `FLyer Hana.pdf` is now transcribed in `assets/js/menu.js`: 17 categories, 118 dish groups and 168 separately priced items/variants. The original PDF is available at `assets/menu/speisekarte.pdf`. Menu numbers, prices, piece counts and source allergen codes are retained. See `MENU-REVIEW.md` for source inconsistencies.
 
-Customers can search by name, number or ingredient, filter vegetarian/spicy choices, select a protein, and add dishes to a persistent cart. Each variant has its own ID and price. Checkout validates contact details and pickup times, shows an itemized review, and prepares an email to the configured HANA address. The copy button provides an alternative for mail clients that cannot handle long messages. Changing the cart invalidates the review and retains entered contact details in page memory.
+Customers can search by name, number or ingredient, filter vegetarian/spicy choices, select a protein, and add dishes to a persistent cart. Each variant has its own ID and price. Checkout validates contact details and pickup times, shows an itemized review, and prepares a WhatsApp message to the configured HANA number. The copy button provides an alternative if WhatsApp cannot be opened. Changing the cart invalidates the review and retains entered contact details in page memory.
 
-The reservation form collects party size, date/time, name, phone, email and wishes, then displays a review and prepares an email. It never claims the restaurant has received or accepted a booking. Personal details are not written to localStorage. Only dish IDs and quantities persist.
+The reservation form collects party size, date/time, name, phone, optional email and wishes, then displays a review and prepares a WhatsApp message. It never claims the restaurant has received or accepted a booking. Personal details are not written to localStorage. Only dish IDs and quantities persist.
 
-The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widget. HANA has no verified Resmio account/widget URL in this workspace. This implementation uses `info@hana84.co` as its email destination. To receive bookings directly without opening a mail app, configure HANA's own booking provider or a server delivery service; no account or email credential is included here.
+The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widget. HANA has no verified Resmio account/widget URL in this workspace. This implementation opens prefilled WhatsApp messages to `+49 2962 9766328`; customers still send the message themselves and wait for confirmation.
 
 ## Editing
 
@@ -39,7 +39,7 @@ The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widg
 - `assets/images/menu-items/`: optimized WebP dish crops; dishes without a source photograph intentionally have no image.
 - `scripts/index.template.html`: page structure and customer copy.
 - `scripts/reservation.template.html`: reservation form and review.
-- `assets/js/reservation.js`: reservation validation, scheduling, review and email preparation.
+- `assets/js/reservation.js`: reservation validation, scheduling, review and WhatsApp preparation.
 - `assets/js/app.js`: search, filters, variant selection, cart and checkout.
 - `assets/js/core.js`: timezone, dates, holidays, scheduling and message generation.
 - `assets/css/booking.css`: menu controls and reservation form styling within HANA's existing visual system.
@@ -49,10 +49,10 @@ Run `npm run build` after edits. The opening schedule retains the previously sup
 
 ## Operational configuration before launch
 
-- Confirm email handling with HANA. Customers must send the prepared email and wait for a reply; there is no automatic submission, table inventory, online payment or acceptance guarantee.
+- Confirm WhatsApp handling with HANA. Customers must send the prepared message and wait for a reply; there is no automatic submission, table inventory, online payment or acceptance guarantee.
 - Scheduling defaults are configurable: pickup lead 30 minutes, reservation lead 30 minutes, reservation duration 60 minutes, booking horizon 90 days. Requests for more than 12 guests are directed to the restaurant's phone number. These are website request limits, not a claim about restaurant capacity.
 - Complete the existing legal operator and hosting/privacy drafts in `scripts/build.mjs` before publication.
-- `RESERVATION_URL` can point the reservation CTA to a verified HANA booking provider. Do not use Mai Wok's account. WhatsApp stays disabled until HANA's number is verified.
+- `RESERVATION_URL` can point the reservation CTA to a verified HANA booking provider. Do not use Mai Wok's account. `WHATSAPP_NUMBER` controls the WhatsApp destination for ordering and reservations.
 
 ## Deployment
 

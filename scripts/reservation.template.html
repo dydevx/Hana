@@ -7,7 +7,7 @@
     <div class="form-row"><label>Datum *<input name="date" type="date" required aria-describedby="reservation-time-help"></label><label>Uhrzeit *<select name="time" required aria-describedby="reservation-time-help"><option value="">Bitte wählen</option></select></label></div>
     <p class="small" id="reservation-time-help">Wunschzeiten innerhalb unserer Öffnungszeiten. HANA bestätigt die Verfügbarkeit.</p>
     <label>Vor- und Nachname *<input name="name" autocomplete="name" required maxlength="100"></label>
-    <div class="form-row"><label>Telefonnummer *<input name="phone" type="tel" autocomplete="tel" required minlength="6" maxlength="30"></label><label>E-Mail-Adresse *<input name="email" type="email" autocomplete="email" required maxlength="150"></label></div>
+    <div class="form-row"><label>Telefonnummer *<input name="phone" type="tel" autocomplete="tel" required minlength="6" maxlength="30"></label><label>E-Mail-Adresse<input name="email" type="email" autocomplete="email" maxlength="150"></label></div>
     <label>Besondere Wünsche<textarea name="notes" rows="2" maxlength="1000" placeholder="Zum Beispiel: Kinderstuhl oder besonderer Anlass"></textarea></label>
     <p class="small">Ihre Angaben verwenden wir für Ihre Reservierungsanfrage. <a href="datenschutz.html">Datenschutz</a></p>
     <p class="form-error" id="reservation-error" role="alert"></p>
@@ -18,10 +18,10 @@
     <h4 id="reservation-review-title" tabindex="-1">Ihre Reservierungsanfrage</h4>
     <pre id="reservation-message" class="request-message"></pre>
     <p>Ihr Tisch ist reserviert, sobald Sie eine Bestätigung von HANA erhalten.</p>
-    <a class="button full-width" id="send-reservation">E-Mail mit Reservierung öffnen ↗</a>
+    <a class="button full-width" id="send-reservation">Reservierung in WhatsApp öffnen ↗</a>
     <button type="button" class="button button-outline full-width" id="copy-reservation">Anfrage kopieren</button>
     <button type="button" class="text-link" id="edit-reservation">Angaben bearbeiten</button>
-    <p class="small booking-help">Es wurde noch keine Anfrage übermittelt. Senden Sie die vorbereitete Nachricht in Ihrem E-Mail-Programm ab.</p>
+    <p class="small booking-help">Es wurde noch keine Anfrage übermittelt. Senden Sie die vorbereitete Nachricht in WhatsApp ab.</p>
     <p id="reservation-copy-status" role="status" class="small"></p>
   </section>
   <noscript><p>Für das Formular aktivieren Sie bitte JavaScript oder <a href="tel:{{PHONE}}">reservieren Sie telefonisch</a>.</p></noscript>

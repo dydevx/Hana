@@ -1,5 +1,5 @@
 import { germanNow, addDays, reservationSlots, reservationMessage } from './core.js';
-import { EMAIL_ADDRESS, RESERVATION_MAX_DAYS } from './config.js';
+import { EMAIL_ADDRESS, RESERVATION_MAX_DAYS, WHATSAPP_NUMBER } from './config.js';
 
 export function initReservation() {
  const form=document.querySelector('#reservation-form');
@@ -33,7 +33,17 @@ export function initReservation() {
   message=reservationMessage(data);
   document.querySelector('#reservation-message').textContent=message;
   document.querySelector('#reservation-copy-status').textContent='';
-  send.href=`mailto:${EMAIL_ADDRESS}?subject=${encodeURIComponent('Tischreservierung – HANA')}&body=${encodeURIComponent(message)}`;
+  if(WHATSAPP_NUMBER) {
+   send.href=`https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
+   send.textContent='Reservierung in WhatsApp öffnen ↗';
+   send.target='_blank';
+   send.rel='noopener noreferrer';
+  } else {
+   send.href=`mailto:${EMAIL_ADDRESS}?subject=${encodeURIComponent('Tischreservierung – HANA')}&body=${encodeURIComponent(message)}`;
+   send.textContent='E-Mail mit Reservierung öffnen ↗';
+   send.removeAttribute('target');
+   send.removeAttribute('rel');
+  }
   form.hidden=true;review.hidden=false;steps[0].removeAttribute('aria-current');steps[1].setAttribute('aria-current','step');
   document.querySelector('#reservation-review-title').focus({preventScroll:true});
   document.querySelector('#reservation-booking').scrollIntoView({block:'start',behavior:'instant'});
@@ -46,7 +56,7 @@ export function initReservation() {
  document.querySelector('#edit-reservation').addEventListener('click',()=>{edit();slots();form.elements.guests.focus();});
  document.querySelector('#copy-reservation').addEventListener('click',async()=>{
   const status=document.querySelector('#reservation-copy-status');
-  try {await navigator.clipboard.writeText(message);status.textContent='Anfrage kopiert. Sie können sie in Ihre E-Mail einfügen.';}
+  try {await navigator.clipboard.writeText(message);status.textContent='Anfrage kopiert. Sie können sie in WhatsApp einfügen.';}
   catch {const range=document.createRange();range.selectNodeContents(document.querySelector('#reservation-message'));const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);status.textContent='Bitte kopieren Sie den markierten Text.';}
  });
 }

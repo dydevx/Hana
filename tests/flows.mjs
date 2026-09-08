@@ -70,7 +70,7 @@ try {
  const message=await page.locator('#order-message').textContent();
  for(const text of ['28G. Gebratener Udon (Garnelen)','28B. Gebratener Udon (Hühnerfleisch)','213. Sake Nigiri','36,00','Ohne Koriander'])assert.ok(message.includes(text),text);
  const orderHref=await page.locator('#send-order').getAttribute('href');
- assert.ok(orderHref.startsWith('mailto:info@hana84.co?'));
+ assert.ok(orderHref.startsWith('https://wa.me/4929629766328?text='));
  assert.ok(decodeURIComponent(orderHref).includes(message));
  await page.locator('#copy-order').click();
  await expect(page.locator('#order-copy-status')).toContainText('kopiert');
@@ -99,6 +99,7 @@ try {
  assert.equal(await page.locator('#reservation-review').isVisible(),true);
  assert.match(await page.locator('#reservation-message').textContent(),/Personen: 4/);
  const bookingHref=await page.locator('#send-reservation').getAttribute('href');
+ assert.ok(bookingHref.startsWith('https://wa.me/4929629766328?text='));
  for(const text of ['Datum: 2026-09-08','18:30 Uhr','Kinderstuhl','test@example.com'])assert.ok(decodeURIComponent(bookingHref).includes(text),text);
  await page.locator('#copy-reservation').click();
  await expect(page.locator('#reservation-copy-status')).toContainText('kopiert');

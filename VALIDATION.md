@@ -7,14 +7,14 @@ Verified locally at http://127.0.0.1:3000 with Chromium. The in-app browser repo
 - Browser layout checks pass at 320, 375, 390, 768, 1024 and 1440 pixels with no horizontal overflow or page errors.
 - Desktop/mobile Axe checks pass. Booking review and cart review also pass their accessibility scans.
 - Actual menu flows pass: number/name/ingredient search, empty results, reset, vegetarian variant selection, protein price changes, add/increment/decrement/remove/clear, persistence across reload, and exact totals.
-- Checkout passes invalid-phone handling, pickup selection, itemized review with variant numbers, email payload, clipboard, editing and preservation of entered details after cart changes.
-- Reservation passes party size, date/time selection, contact details, wishes, email payload, clipboard, review/edit and rejection of an expired time immediately before opening email.
+- Checkout passes invalid-phone handling, pickup selection, itemized review with variant numbers, WhatsApp payload, clipboard, editing and preservation of entered details after cart changes.
+- Reservation passes party size, date/time selection, contact details, wishes, WhatsApp payload, clipboard, review/edit and rejection of an expired time immediately before opening WhatsApp.
 - Personal details are not persisted in localStorage. The reservation form stays hidden without JavaScript and offers a telephone fallback; the complete menu remains in static HTML.
 - The original PDF is copied to assets/menu/speisekarte.pdf. Source anomalies and the authoritative opening schedule are documented in MENU-REVIEW.md.
 
 Screenshots: test-results/menu-mobile.png, reservation-desktop.png, reservation-form-mobile.png, reservation-review-mobile.png and order-review-mobile.png. Full-site images and accessibility output are also under test-results/.
 
-No order or reservation was transmitted, and no deployment was performed. Actual receipt/acceptance cannot be tested without the restaurant. The static site prepares email requests; it does not provide direct delivery, live table inventory or online payment. HANA's own booking provider/account is needed for a direct widget such as the reference site's Resmio integration.
+No order or reservation was transmitted, and no deployment was performed. Actual receipt/acceptance cannot be tested without the restaurant. The static site prepares WhatsApp requests; it does not provide direct delivery, live table inventory or online payment. HANA's own booking provider/account is needed for a direct widget such as the reference site's Resmio integration.
 
 Existing Impressum and Datenschutz operator/hosting drafts still require business details before publication. Prior Lighthouse results predate this feature update; no new performance score is claimed.
 

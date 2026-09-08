@@ -3,7 +3,7 @@
 export const CONTENT_SOURCE_URL = 'https://ca.camcam.click/hana';
 export const RESTAURANT_NAME = 'HANA Japanisches Restaurant';
 export const PHONE_NUMBER = '+4929629766328';
-export const WHATSAPP_NUMBER = '';
+export const WHATSAPP_NUMBER = '+4929629766328';
 export const EMAIL_ADDRESS = 'info@hana84.co';
 export const RESERVATION_URL = ''; // Official foodbooking link returned 404; do not reuse it.
 export const ADDRESS = 'Carlsauestraße 6, 59939 Olsberg, Deutschland';
