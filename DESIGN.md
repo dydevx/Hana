@@ -1,6 +1,6 @@
 # HANA visual system
 
-The visitor checks food and reservations on a phone or plans a visit on desktop. The user requested the visual tone of the supplied FLyer Hana.pdf: charcoal, champagne gold, ivory text and food photography against dark surfaces. The flyer is the color and identity reference.
+The visitor checks food and reservations on a phone or plans a visit on desktop. The user requested the visual tone of the supplied MENU.pdf: charcoal, champagne gold, ivory text and food photography against dark surfaces. The menu is the color and identity reference.
 
 Native HTML/CSS/JS. Shared semantic palette lives in `assets/css/style.css`: charcoal background (visually matched to PDF #191817), three dark surface levels, champagne gold for headings and primary actions, ivory foreground, warm muted text, distinct coral errors and soft green open status. Gold-filled buttons use dark text. Secondary controls use gold borders or labels on charcoal. All customer surfaces, the cart, forms, review panels and legal pages use the same palette.
 
@@ -18,4 +18,4 @@ The menu has a dedicated ordering layout (`assets/css/menu-experience.css`) insp
 
 Search supports numbers, ingredients and variants. Category selection clears prior filters and can be reloaded through its URL hash. Dietary filters cover vegetarian, vegan and spicy choices. Results are paginated in groups of eight while all dishes remain in the static HTML for no-JavaScript reading.
 
-Dish cards separate source numbers, portion/dietary labels, dish names and prices. Thirty-two cards use individual food photographs cropped from the supplied flyer; cards without a clearly attributable source photograph have no image or placeholder. Allergen codes are available in native details elements. Variant selectors update price, dietary labels and allergens together. Every card ends with a full-width add button; its count updates for the current variant. The catalog footer and existing header/mobile actions open the cart dialog for editing and checkout.
+Dish cards separate source numbers, portion/dietary labels, dish names and prices. Fifty-two cards use food photographs cropped directly from the supplied MENU.pdf; cards without a clearly attributable source photograph have no image or placeholder. Allergen codes are available in native details elements. Variant selectors update price, dietary labels and allergens together. Every card ends with a full-width add button; its count updates for the current variant. The catalog footer and existing header/mobile actions open the cart dialog for editing and checkout.

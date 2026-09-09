@@ -1,4 +1,4 @@
-"""Extract the dish photographs that are explicitly shown in FLyer Hana.pdf."""
+"""Extract the dish photographs explicitly shown in the supplied HANA menus."""
 
 from pathlib import Path
 
@@ -7,56 +7,79 @@ from pypdf import PdfReader
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PDF = ROOT / "FLyer Hana.pdf"
+CURRENT_PDF = ROOT / "MENU.pdf"
 OUTPUT = ROOT / "assets" / "images" / "menu-items"
 PREVIEW = ROOT / "tmp" / "pdfs" / "menu-item-contact-sheet.jpg"
 
-# Pixel coordinates refer to the 1805 x 2533 embedded flyer artwork. Only
-# photographs that can be associated with an individual numbered dish are used.
-CROPS = {
-    "hana-16": (288, 1998, 416, 2066),
-    "hana-17": (288, 2072, 416, 2139),
-    "hana-213": (222, 160, 298, 202),
-    "hana-214": (306, 160, 382, 202),
-    "hana-216": (392, 160, 470, 202),
-    "hana-230": (291, 454, 415, 508),
-    "hana-231": (291, 526, 415, 582),
-    "hana-232": (291, 598, 415, 654),
-    "hana-233": (291, 670, 415, 727),
-    "hana-242": (294, 840, 417, 894),
-    "hana-243": (294, 900, 417, 949),
-    "hana-245": (294, 968, 417, 1020),
-    "hana-248": (294, 1098, 417, 1153),
-    "hana-249": (294, 1161, 417, 1208),
-    "hana-260": (717, 104, 835, 160),
-    "hana-263": (717, 224, 835, 281),
-    "hana-265": (717, 305, 835, 364),
-    "hana-266": (717, 363, 835, 412),
-    "hana-267": (717, 421, 835, 479),
-    "hana-270": (717, 563, 835, 624),
-    "hana-280": (717, 754, 835, 817),
-    "hana-283": (717, 910, 835, 971),
-    "hana-284": (717, 985, 835, 1047),
-    "hana-285": (717, 1059, 835, 1125),
-    "hana-330": (1100, 498, 1245, 542),
-    "hana-332": (1100, 603, 1245, 658),
-    "hana-333": (1100, 662, 1245, 714),
-    "hana-335": (1100, 754, 1245, 807),
-    "hana-336": (1120, 817, 1245, 871),
-    "hana-338": (1120, 914, 1245, 976),
-    "hana-339": (1100, 1023, 1245, 1096),
-    "hana-340": (1120, 1128, 1245, 1190),
+# One-based page numbers and pixel coordinates refer to the 1701 x 1193
+# flattened artwork in MENU.pdf. Crops are limited to photographs that can be
+# attributed to a numbered dish without guessing.
+MENU_CROPS = {
+    "hana-3": (3, (170, 355, 660, 535)),
+    "hana-10": (3, (430, 470, 835, 720)),
+    "hana-13": (3, (5, 505, 425, 735)),
+    "hana-14": (3, (410, 680, 815, 985)),
+    "hana-15": (4, (80, 520, 470, 805)),
+    "hana-20": (4, (360, 640, 810, 945)),
+    "hana-16": (3, (1240, 885, 1515, 995)),
+    "hana-17": (3, (1240, 1005, 1515, 1120)),
+    "hana-30a": (5, (20, 350, 850, 817)),
+    "hana-60a": (6, (0, 660, 500, 941)),
+    "hana-70a": (7, (320, 400, 600, 558)),
+    "hana-100a": (7, (150, 710, 770, 1059)),
+    "hana-110a": (7, (520, 520, 850, 706)),
+    "hana-203": (8, (270, 720, 830, 1035)),
+    "hana-205": (8, (0, 630, 340, 821)),
+    "hana-25": (9, (90, 420, 850, 848)),
+    "hana-213": (10, (85, 660, 365, 750)),
+    "hana-214": (10, (85, 830, 365, 940)),
+    "hana-216": (10, (450, 455, 735, 575)),
+    "hana-230": (10, (955, 500, 1290, 635)),
+    "hana-231": (10, (955, 825, 1290, 965)),
+    "hana-232": (10, (1325, 500, 1665, 635)),
+    "hana-233": (10, (1320, 825, 1665, 965)),
+    "hana-242": (11, (75, 430, 370, 560)),
+    "hana-243": (11, (75, 645, 370, 770)),
+    "hana-245": (11, (75, 905, 370, 1035)),
+    "hana-246": (11, (465, 305, 740, 430)),
+    "hana-248": (11, (465, 605, 740, 735)),
+    "hana-249": (11, (465, 845, 740, 960)),
+    "hana-260": (11, (965, 300, 1285, 420)),
+    "hana-263": (11, (965, 620, 1285, 735)),
+    "hana-265": (11, (965, 890, 1290, 1035)),
+    "hana-266": (11, (1355, 305, 1655, 420)),
+    "hana-267": (11, (1355, 505, 1655, 615)),
+    "hana-270": (11, (1355, 825, 1660, 965)),
+    "hana-280": (12, (75, 475, 370, 605)),
+    "hana-283": (12, (75, 935, 370, 1070)),
+    "hana-284": (12, (445, 545, 745, 685)),
+    "hana-285": (12, (455, 795, 745, 945)),
+    "hana-286": (12, (975, 150, 1290, 305)),
+    "hana-287": (12, (975, 410, 1290, 555)),
+    "hana-291": (12, (1360, 410, 1665, 555)),
+    "hana-310": (13, (0, 0, 850, 405)),
+    "hana-324": (13, (850, 0, 1701, 405)),
+    "hana-330": (14, (80, 330, 370, 460)),
+    "hana-332": (14, (80, 675, 370, 825)),
+    "hana-333": (14, (80, 930, 370, 1055)),
+    "hana-335": (14, (460, 415, 745, 525)),
+    "hana-336": (14, (460, 665, 745, 815)),
+    "hana-338": (14, (965, 225, 1290, 370)),
+    "hana-339": (14, (990, 530, 1290, 720)),
+    "hana-340": (14, (1350, 270, 1670, 465)),
 }
 
 
-def source_artwork() -> Image.Image:
-    page = PdfReader(PDF).pages[0]
+def current_page_artwork(page_number: int) -> Image.Image:
+    page = PdfReader(CURRENT_PDF).pages[page_number - 1]
     images = sorted(page.images, key=lambda image: len(image.data), reverse=True)
     if not images:
-        raise RuntimeError("No embedded artwork found in the flyer PDF")
+        raise RuntimeError(f"No embedded artwork found on page {page_number}")
     artwork = images[0].image.convert("RGB")
-    if artwork.size != (1805, 2533):
-        raise RuntimeError(f"Unexpected flyer artwork size: {artwork.size}")
+    if artwork.size != (1701, 1193):
+        raise RuntimeError(
+            f"Unexpected MENU.pdf artwork size on page {page_number}: {artwork.size}"
+        )
     return artwork
 
 
@@ -79,14 +102,16 @@ def contact_sheet(crops: list[tuple[str, Image.Image]]) -> None:
 
 
 def main() -> None:
-    artwork = source_artwork()
     OUTPUT.mkdir(parents=True, exist_ok=True)
     previews = []
-    for dish_id, bounds in CROPS.items():
-        crop = artwork.crop(bounds).filter(
-            ImageFilter.UnsharpMask(radius=0.65, percent=135, threshold=2)
+    pages = {}
+    for dish_id, (page_number, bounds) in MENU_CROPS.items():
+        if page_number not in pages:
+            pages[page_number] = current_page_artwork(page_number)
+        crop = pages[page_number].crop(bounds).filter(
+            ImageFilter.UnsharpMask(radius=0.75, percent=125, threshold=2)
         )
-        crop.save(OUTPUT / f"{dish_id}.webp", "WEBP", lossless=True, method=6)
+        crop.save(OUTPUT / f"{dish_id}.webp", "WEBP", quality=88, method=6)
         previews.append((dish_id, crop))
     contact_sheet(previews)
     print(f"Extracted {len(previews)} dish photographs to {OUTPUT}")

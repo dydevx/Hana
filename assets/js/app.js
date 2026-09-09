@@ -72,7 +72,7 @@ function selectVariant(dish,id) {
  dish.querySelector('[data-dish-description]').textContent=item.description;
  dish.querySelector('[data-dish-price]').textContent=money(item.priceCents);
  dish.querySelector('[data-dish-tags]').textContent=[item.quantityLabel,item.vegan?'Vegan':item.vegetarian?'Vegetarisch':'',item.spicy?'Scharf':''].filter(Boolean).join(' · ');
- const meta=[item.allergens.length?'Allergene (Flyer): '+item.allergens.join(', '):'',item.additives.length?'Zusatzstoffe: '+item.additives.join(', '):''].filter(Boolean).join(' · ');
+  const meta=[item.allergens.length?'Allergene (Speisekarte): '+item.allergens.join(', '):'',item.additives.length?'Zusatzstoffe: '+item.additives.join(', '):''].filter(Boolean).join(' · ');
  dish.querySelector('[data-dish-meta]').textContent=meta;
  dish.querySelector('.dish-details').hidden=!meta;
  const button=dish.querySelector('[data-add]');button.dataset.add=id;

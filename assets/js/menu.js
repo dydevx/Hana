@@ -1,8 +1,8 @@
-// Visually transcribed from FLyer Hana.pdf, page 1, on 2026-09-07.
-// Source numbers and prices are preserved. Allergen codes reproduce the flyer.
+// Visually transcribed from the supplied menus and updated against MENU.pdf on 2026-09-09.
+// Source numbers and prices are preserved. Allergen codes reproduce the current menu.
 const categories = [];
 let category;
-function section(id, name, quantityLabel = '') { category = {id,name,items:[],quantityLabel}; categories.push(category); }
+function section(id, name, quantityLabel = '', note = '') { category = {id,name,items:[],quantityLabel,note}; categories.push(category); }
 function dish(number,name,priceCents,description='',codes='',extra={}) {
  category.items.push({id:`hana-${number.toLowerCase()}`,number,name,priceCents,description,quantityLabel:category.quantityLabel,allergens:codes?codes.split(','):[],additives:[],vegetarian:false,vegan:false,spicy:false,...extra});
 }
@@ -101,13 +101,19 @@ dish('269','Hitomi',850,'Frittierter Surimi mit Avocado, Gurke, Frischkäse und 
 dish('270','Tomoko',1000,'Ente in Tempurateig, Sesam, Gurke, Frischkäse und Chilisoße.','a,g,k');
 dish('271','Yoko',1000,'Gebackenes Hühnchen, Gurke, Frischkäse, Mango und Sesam.','g,k');
 dish('272','Lachs Avocado',800,'Lachs, Avocado und Sesam.','d,k');
-section('inside-out','Inside Out Special','8 Stück');
+section('inside-out','Inside Out Special','8 Stück','Alle mit Unagi Soße und Hausgemachte Mayo Soße');
 dish('280','Yukiko',1450,'Aal, gebratene Lachshaut, Gurke, Frischkäse, Lachs on top und Flugfischkaviar.','d');
 dish('281','Ochi Sake',1450,'Thunfisch, Avocado, Sesam und Lachs on top.','d,k');
 dish('282','Daiki',1450,'Flambierter Lachs on top, Gurke, Garnelen, Avocado und Flugfischkaviar.','b,d,g');
 dish('283','Mono',1450,'Lachstatar, Mango, Gurke, pikante Sauce, flambierter Lachs on top und Flugfischkaviar.','d');
 dish('284','Midori',1500,'Gurke, Avocado, pikanter Thunfisch, Thunfisch on top und Flugfischkaviar.','d');
 dish('285','Ebisu',1300,'Garnelen-Tempura, Sesam, Salat und Avocado on top.','b,k');
+dish('286','Kaito',1450,'Thunfisch-Tempura, Frischkäse, Gurke, Rettich und Avocado on top.','d,g');
+dish('287','Dragonroll',1450,'Avocado, Garnelen, Gurke, Frischkäse, Flugfischkaviar und flambierter Lachs on top.','a,b,d');
+dish('288','Saitou',1450,'Lachshaut, Frischkäse, Gurke, Avocado, Rettich, Thunfisch und Flugfischkaviar on top.','d,g');
+dish('289','Nagano',1300,'Avocado, Gurke, Flugfischkaviar, Surimi, Frischkäse und Lachs on top.','b,d,g');
+dish('290','Haru',1300,'Gebackenes Hähnchen, Mango, Gurke, Frischkäse und Avocado on top.','g');
+dish('291','Hama Roll',1450,'Gebackenes Hähnchen, Mango, Gurke, Frischkäse, Lachs on top und Flugfischkaviar.','d,g');
 section('sashimi','Sashimi','8 Stück');
 dish('300','Sashimi Lachs',1550,'Lachs.','d');
 dish('301','Sashimi Thunfisch',1750,'Thunfisch.','d');
@@ -117,7 +123,7 @@ dish('310','Fuji',900,'Garnelen, Avocado, Tobiko, Gurke, Frischkäse und süß-s
 dish('311','Hiro',900,'Lachs, Avocado und Frischkäse.','d,g');
 dish('312','Naomi',800,'Surimi, Avocado und Frischkäse.','b,g');
 dish('313','Natsumi',800,'Mango, Avocado und Frischkäse.','g');
-dish('314','Totori',800,'Hähnchen, Avocado, Mango und Gurke.');
+dish('314','Totori',800,'Hähnchen, Avocado, Mango, Gurke und Frischkäse.','g');
 dish('315','Fried Tuna Roll',900,'Thunfisch, Avocado, Frischkäse, Gurke und Chilisoße.','d,g',{spicy:true});
 section('vegetarisch','Vegetarisches Sushi');
 dish('320','Sayuri',750,'Gurke, Frischkäse, Avocado und Sesam.','k',{vegetarian:true});
@@ -154,8 +160,8 @@ dish('25','Ball Sesam',450,'Rote Bohnen.','k',{quantityLabel:'2 Stück'});
 dish('26','Gebackene Banane',400,'Mit Honig.','a');
 dish('27','Mochi Japan',500,'Mango, Erdbeere, Maracuja, Kokos, Vanille oder Matcha.','g',{quantityLabel:'2 Stück',choices:['Mango','Erdbeere','Maracuja','Kokos','Vanille','Matcha']});
 dish('29','Dorayaki',500,'','a');
-export const MENU = {verified:true,source:'FLyer Hana.pdf',categories,
- sourceNotes:'Allergenkennzeichnungen gemäß Flyer. Bitte besprechen Sie Allergien mit unserem Team. Die Stückzahlen der Menüs werden wie im Flyer angegeben übernommen.',
+export const MENU = {verified:true,source:'MENU.pdf',categories,
+ sourceNotes:'Allergenkennzeichnungen gemäß aktueller Speisekarte. Bitte besprechen Sie Allergien mit unserem Team. Die Stückzahlen der Menüs werden wie in der Speisekarte angegeben übernommen.',
  allergens:{a:'Glutenhaltiges Getreide (Weizen, Roggen, Gerste, Hafer, Dinkel, Kamut und Hybridstämme)',b:'Krebstiere',c:'Eier',d:'Fisch',e:'Erdnüsse',f:'Soja',g:'Milch und Milchprodukte (einschließlich Laktose)',h:'Schalenfrüchte (Mandeln, Haselnüsse, Walnüsse, Cashew, Pecannüsse, Paranüsse, Pistazien, Macadamia- und Queenslandnüsse)',i:'Sellerie',j:'Senf',k:'Sesamsamen',l:'Schwefeldioxid und Sulfite über 10 mg/kg oder 10 mg/l',m:'Lupinen',n:'Weichtiere'},
  additives:{1:'Mit Konservierungsstoff',2:'Mit Geschmacksverstärker',3:'Mit Antioxidationsmittel',4:'Mit Farbstoff',5:'Mit Phosphat',6:'Mit Süßungsmittel',7:'Koffeinhaltig',8:'Chininhaltig',9:'Geschwärzt',10:'Enthält Phenylalaninquelle'}
 };

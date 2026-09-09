@@ -14,13 +14,13 @@ npm run dev
 
 Open http://127.0.0.1:3000. On PowerShell systems that block npm.ps1, use `npm.cmd`.
 
-## Flyer visual identity
+## Menu visual identity
 
 The interface uses the charcoal/champagne-gold/ivory palette of the supplied PDF, including the actual flyer logo. Shared tokens live in `assets/css/style.css`; `assets/css/flyer-theme.css` applies the photographic hero, gold menu hierarchy and dark form/cart/booking surfaces. Legal pages share the theme.
 
 ## Menu and booking
 
-The supplied `FLyer Hana.pdf` is now transcribed in `assets/js/menu.js`: 17 categories, 118 dish groups and 168 separately priced items/variants. The original PDF is available at `assets/menu/speisekarte.pdf`. Menu numbers, prices, piece counts and source allergen codes are retained. See `MENU-REVIEW.md` for source inconsistencies.
+The current supplied `MENU.pdf` is transcribed in `assets/js/menu.js`: 17 categories, 124 dish groups and 174 separately priced items/variants. The current downloadable copy is available at `assets/menu/speisekarte.pdf`. Menu numbers, prices, piece counts and source allergen codes are retained. Fifty-two food photographs are cropped directly from the same PDF and attached only to matching or clearly representative dishes. See `MENU-REVIEW.md` for source inconsistencies.
 
 Customers can search by name, number or ingredient, filter vegetarian/spicy choices, select a protein, and add dishes to a persistent cart. Each variant has its own ID and price. Checkout validates contact details and pickup times, shows an itemized review, and prepares a WhatsApp message to the configured HANA number. The copy button provides an alternative if WhatsApp cannot be opened. Changing the cart invalidates the review and retains entered contact details in page memory.
 
@@ -35,7 +35,7 @@ The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widg
 - `scripts/render-menu.mjs`: static menu HTML, category navigation and variant selectors.
 - `scripts/menu-section.template.html`: dedicated ordering section and catalog controls.
 - `assets/css/menu-experience.css`: responsive editorial sidebar, category chips, dish cards and pagination.
-- `scripts/extract-menu-images.py`: reproducible crops for the 32 dishes that have an individual photograph in the supplied flyer.
+- `scripts/extract-menu-images.py`: reproducible crops for 52 dish photographs in the current `MENU.pdf`.
 - `assets/images/menu-items/`: optimized WebP dish crops; dishes without a source photograph intentionally have no image.
 - `scripts/index.template.html`: page structure and customer copy.
 - `scripts/reservation.template.html`: reservation form and review.
@@ -45,7 +45,7 @@ The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widg
 - `assets/css/booking.css`: menu controls and reservation form styling within HANA's existing visual system.
 - `scripts/build.mjs`: regenerates root HTML and deployment files in `dist/`.
 
-Run `npm run build` after edits. The opening schedule retains the previously supplied brief: weekdays 12:00-14:30 / 17:00-22:00; weekends and NRW public holidays 12:00-15:00 / 16:00-22:00. The flyer has different hours and has only been used as the menu source.
+Run `npm run build` after edits. The opening schedule retains the previously supplied brief: weekdays 12:00-14:30 / 17:00-22:00; weekends and NRW public holidays 12:00-15:00 / 16:00-22:00. The menu PDF has different hours and has only been used as the food-menu source.
 
 ## Operational configuration before launch
 
@@ -84,6 +84,6 @@ The user selected [ca.camcam.click/hana](https://ca.camcam.click/hana) as the in
 
 Eight additional source photographs are now used across the hero, introduction and six-image gallery: real food platters, restaurant interior, entrance and bar. The introduction reflects the source's Japanese cuisine, à-la-carte selection, atmosphere, wines and cocktails. Exact image URLs and source pages are recorded in `assets/images/camcam-sources.json`; the combined image inventory remains in `assets/images/sources.json`. Third-party ownership/licensing is not independently established. The page does not claim gallery photographs are individually named current menu dishes.
 
-The source's Kontakt page also links to [HANA on Facebook](https://www.facebook.com/hana.restaurant.olsberg/) and [Google Maps](https://maps.app.goo.gl/G9P2BgAJNAMqWE3z7). The embedded map points to the same HANA place as the current site. Its old opening hours are deliberately superseded by the user's new schedule. The source reservation action opens an internal builder form rather than providing a verified standalone booking-service URL; the website now provides a reservation request form with a telephone fallback. Menu data now comes exclusively from the supplied FLyer Hana.pdf; no prices were imported from the old website.
+The source's Kontakt page also links to [HANA on Facebook](https://www.facebook.com/hana.restaurant.olsberg/) and [Google Maps](https://maps.app.goo.gl/G9P2BgAJNAMqWE3z7). The embedded map points to the same HANA place as the current site. Its old opening hours are deliberately superseded by the user's new schedule. The source reservation action opens an internal builder form rather than providing a verified standalone booking-service URL; the website now provides a reservation request form with a telephone fallback. Menu data and dish photography now come exclusively from the supplied `MENU.pdf`; no prices were imported from the old website.
 
 The official [Foodbooking reservation URL](https://www.foodbooking.com/api/fb/gp_jzy) returned 404. Mai Wok was inspected as an information-architecture reference; no menu data or source code was reused. The HANA Google Maps embed loads directly in the location section. Google Fonts Cormorant Garamond and Inter are locally hosted variable WOFF2 subsets; their OFL licenses are in `assets/fonts/`.

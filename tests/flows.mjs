@@ -11,7 +11,7 @@ try {
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.clock.install({time:new Date('2026-09-07T10:00:00Z')});
  await page.goto('http://127.0.0.1:3000/');
- assert.equal(await page.locator('.dish').count(),118);
+ assert.equal(await page.locator('.dish').count(),124);
  assert.equal(await page.locator('.dish:visible').count(),8);
  await page.locator('[data-menu-category="reis"]').click();
  await expect(page.locator('[data-menu-category="reis"]')).toHaveAttribute('aria-current','true');

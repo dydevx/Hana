@@ -26,7 +26,7 @@ await page.locator('.cart-trigger').click();await page.getByRole('heading',{name
 assert.equal(await page.locator('#cart-footer').isVisible(),false);
 await page.keyboard.press('Escape');assert.equal(await page.locator('#cart-dialog').isVisible(),false);
 await page.locator('.gallery-item').first().click();assert.equal(await page.locator('#lightbox').isVisible(),true);
-await page.keyboard.press('ArrowRight');assert.match(await page.locator('#lightbox-caption').textContent(),/^2 \/ 6/);await page.keyboard.press('Escape');
+await page.keyboard.press('ArrowRight');assert.match(await page.locator('#lightbox-caption').textContent(),/^2 \/ 7/);await page.keyboard.press('Escape');
 for(const width of [320,375,390,768,1024]){
  await page.setViewportSize({width,height:844});await page.goto('http://127.0.0.1:3000/',{waitUntil:'networkidle'});
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Horizontal overflow at ${width}`);

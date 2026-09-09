@@ -25,13 +25,14 @@ test('Reservation payload preserves guests, contact and wishes',()=>{
  const message=reservationMessage({guests:'4',date:'2026-09-08',time:'18:30',name:'Gast',phone:'123456',email:'test@example.com',notes:'Kinderstuhl'});
  for(const value of ['Personen: 4','18:30 Uhr','test@example.com','Kinderstuhl'])assert.ok(message.includes(value));
 });
-test('Flyer price tiers and sets retain exact euro cents and unique identifiers',()=>{
+test('Current menu price tiers and sets retain exact euro cents and unique identifiers',()=>{
  const items=MENU.categories.flatMap(c=>c.items);const lookup=new Map(items.map(i=>[i.number,i]));
- assert.equal(items.length,168);assert.equal(new Set(items.map(i=>i.id)).size,168);
- assert.equal(MENU.source,'FLyer Hana.pdf');assert.equal(MENU.verified,true);
- for(const [number,price] of [['6G',550],['28G',1700],['50G',1600],['70F',1700],['30E',1500],['213',500],['261',650],['334',4000],['340',9500],['128',350],['27',500]])assert.equal(lookup.get(number).priceCents,price,number);
+ assert.equal(items.length,174);assert.equal(new Set(items.map(i=>i.id)).size,174);
+ assert.equal(MENU.source,'MENU.pdf');assert.equal(MENU.verified,true);
+ for(const [number,price] of [['6G',550],['28G',1700],['50G',1600],['70F',1700],['30E',1500],['213',500],['261',650],['286',1450],['289',1300],['291',1450],['314',800],['334',4000],['340',9500],['128',350],['27',500]])assert.equal(lookup.get(number).priceCents,price,number);
  assert.deepEqual(lookup.get('4').allergens,['a']);
  assert.deepEqual(lookup.get('27').allergens,['g']);
+ assert.match(lookup.get('314').description,/Gurke und Frischkäse/);
  assert.equal(lookup.get('30A').vegan,false);assert.match(lookup.get('30A').description,/Vegan auf Anfrage/);
  for(const item of items){assert.ok(Number.isInteger(item.priceCents));for(const code of item.allergens)assert.ok(MENU.allergens[code]);}
 });
