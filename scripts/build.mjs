@@ -18,14 +18,14 @@ for(const category of MENU.categories){
 if(MENU.categories.length && (!MENU.verified || !MENU.source)) throw Error('Menu requires source and verification');
 const menuHTML=renderMenu(MENU);
 const gallery=[
- {id:'01',alt:'Bar und Empfangsbereich im HANA Restaurant'},
- {id:'02',alt:'Gastraum mit Holztischen und Blick auf die Sushi-Theke'},
- {id:'03',alt:'Heller Sitzbereich mit japanischem Wandbild'},
- {id:'04',alt:'Gastraum mit japanischen Holzdetails und Laternen'},
- {id:'05',alt:'Ruhiger Sitzbereich am Fenster im HANA'},
- {id:'06',alt:'Sitzbereich mit Kirschblüten und HANA Wandzeichen'},
- {id:'07',alt:'Gemütlicher Gastraum mit grüner Deckendekoration'}
-].map(g=>`<button class="gallery-item" data-photo="assets/images/hana-interior-${g.id}.webp" data-caption="${e(g.alt)}" aria-label="Bild vergrößern: ${e(g.alt)}"><img src="assets/images/hana-interior-${g.id}.webp" alt="${e(g.alt)} – HANA Japanisches Restaurant Olsberg" width="1276" height="956" loading="lazy" decoding="async"><span aria-hidden="true">↗</span></button>`).join('');
+ {id:'04',title:'Japanische Details',alt:'Gastraum mit japanischen Holzdetails und Laternen'},
+ {id:'01',title:'Bar & Empfang',alt:'Bar und Empfangsbereich im HANA Restaurant'},
+ {id:'03',title:'Plätze im Tageslicht',alt:'Heller Sitzbereich mit japanischem Wandbild'},
+ {id:'06',title:'Unter Kirschblüten',alt:'Sitzbereich mit Kirschblüten und HANA Wandzeichen'},
+ {id:'05',title:'Am Fenster',alt:'Ruhiger Sitzbereich am Fenster im HANA'},
+ {id:'02',title:'Blick zur Sushi-Theke',alt:'Gastraum mit Holztischen und Blick auf die Sushi-Theke'},
+ {id:'07',title:'Grün & gemütlich',alt:'Gemütlicher Gastraum mit grüner Deckendekoration'}
+].map(g=>`<button class="gallery-item" data-photo="assets/images/hana-interior-${g.id}.webp" data-caption="${e(g.alt)}" aria-label="Bild vergrößern: ${e(g.alt)}"><img src="assets/images/hana-interior-${g.id}.webp" alt="${e(g.alt)} – HANA Japanisches Restaurant Olsberg" width="1276" height="956" loading="lazy" decoding="async"><span class="gallery-item-meta" aria-hidden="true"><strong>${e(g.title)}</strong><i>↗</i></span></button>`).join('');
 const schema={'@context':'https://schema.org','@type':'Restaurant','@id':c.SITE_URL+'/#restaurant',name:c.RESTAURANT_NAME,image:c.SITE_URL+'/assets/images/hana-hero-v2.webp',address:{'@type':'PostalAddress',streetAddress:street,postalCode,addressLocality:cityParts.join(' '),addressCountry:country==='Deutschland'?'DE':country},telephone:c.PHONE_NUMBER,email:c.EMAIL_ADDRESS,url:c.SITE_URL,servesCuisine:['Japanisch','Sushi','Sashimi','Asia Fusion'],menu:c.SITE_URL+'/#speisekarte',openingHoursSpecification:[...c.OPENING_HOURS.weekday.map(([opens,closes])=>({'@type':'OpeningHoursSpecification',dayOfWeek:['Monday','Tuesday','Wednesday','Thursday','Friday'],opens,closes})),...c.OPENING_HOURS.weekend.map(([opens,closes])=>({'@type':'OpeningHoursSpecification',dayOfWeek:['Saturday','Sunday','PublicHolidays'],opens,closes}))],sameAs:[c.FACEBOOK_URL,c.INSTAGRAM_URL].filter(Boolean)};
 const values={HOURS:hours,GALLERY:gallery,SCHEMA:JSON.stringify(schema).replace(/</g,'\\u003c'),PHONE:c.PHONE_NUMBER,EMAIL:c.EMAIL_ADDRESS,SITE:c.SITE_URL,MAP:c.GOOGLE_MAPS_URL,MAP_EMBED:e(c.MAP_EMBED_URL),RESERVATION:c.RESERVATION_URL||'#reservation-booking',RESERVATION_LABEL:'Tisch online reservieren',SOCIAL:[['Facebook',c.FACEBOOK_URL],['Instagram',c.INSTAGRAM_URL]].filter(([,url])=>url).map(([label,url])=>`<a href="${e(url)}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`).join(''),MENU:menuHTML||`<div class="menu-pending"><span class="menu-symbol" aria-hidden="true">HANA</span><div><h3>Unsere neue Speisekarte ist bald für Sie da.</h3><p>Bis dahin beraten wir Sie gerne persönlich zu unseren Gerichten und Ihrer Bestellung zur Abholung.</p><a class="text-link" href="tel:${c.PHONE_NUMBER}">Speisekarte telefonisch erfragen <span aria-hidden="true">↗</span></a></div></div>`,MENU_NAV:renderMenuNavigation(MENU),MENU_TOOLS:renderMenuTools(),PDF:c.MENU_PDF_URL?`<a class="text-link" href="${e(c.MENU_PDF_URL)}" target="_blank" rel="noopener">Speisekarte als PDF ansehen ↗</a>`:'',LEGEND:`<p class="menu-source-note">${e(MENU.sourceNotes || '')}</p>`+Object.entries({Allergene:MENU.allergens,Zusatzstoffe:MENU.additives}).filter(([,values])=>Object.keys(values).length).map(([label,values])=>`<details class="legend"><summary>${label}</summary><p>${Object.entries(values).map(([key,value])=>`${e(key)}: ${e(value)}`).join(' · ')}</p></details>`).join('')};
 let html=await readFile('scripts/index.template.html','utf8');
