@@ -26,7 +26,7 @@ Customers can search by name, number or ingredient, filter vegetarian/spicy choi
 
 The reservation form collects party size, date/time, name, phone, optional email and wishes, then displays a review and prepares a WhatsApp message. It never claims the restaurant has received or accepted a booking. Personal details are not written to localStorage. Only dish IDs and quantities persist.
 
-The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widget. HANA has no verified Resmio account/widget URL in this workspace. This implementation opens prefilled WhatsApp messages to `+49 2962 9766328`; customers still send the message themselves and wait for confirmation.
+The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widget. HANA has no verified Resmio account/widget URL in this workspace. This implementation opens prefilled WhatsApp messages to `+49 1525 7186870`; customers still send the message themselves and wait for confirmation.
 
 ## Editing
 
