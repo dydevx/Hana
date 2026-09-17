@@ -1,6 +1,6 @@
 <div class="reservation-booking" id="reservation-booking">
   <div class="booking-heading"><h3>Ihr Tisch bei HANA</h3><p>Wunschtermin wählen und Reservierung anfragen.</p></div>
-  <ol class="booking-progress" aria-label="Reservierungsschritte"><li aria-current="step">1. Ihr Besuch</li><li>2. Anfrage prüfen</li></ol>
+  <ol class="booking-progress" aria-label="Reservierungsschritte"><li aria-current="step">1. Ihr Besuch</li><li>2. E-Mail öffnen</li></ol>
   <form id="reservation-form" hidden>
     <p class="small">* Pflichtfelder · Ortszeit Olsberg</p>
     <label>Personen *<select name="guests" required><option value="2" selected>2 Personen</option><option value="1">1 Person</option><option value="3">3 Personen</option><option value="4">4 Personen</option><option value="5">5 Personen</option><option value="6">6 Personen</option><option value="7">7 Personen</option><option value="8">8 Personen</option><option value="9">9 Personen</option><option value="10">10 Personen</option><option value="11">11 Personen</option><option value="12">12 Personen</option></select></label>
@@ -11,18 +11,31 @@
     <label>Besondere Wünsche<textarea name="notes" rows="2" maxlength="1000" placeholder="Zum Beispiel: Kinderstuhl oder besonderer Anlass"></textarea></label>
     <p class="small">Ihre Angaben verwenden wir für Ihre Reservierungsanfrage. <a href="datenschutz.html">Datenschutz</a></p>
     <p class="form-error" id="reservation-error" role="alert"></p>
-    <button type="submit" class="button full-width">Reservierung prüfen <span aria-hidden="true">→</span></button>
+    <button type="submit" class="button full-width">Reservierung per E-Mail öffnen <span aria-hidden="true">→</span></button>
     <p class="small booking-help">Für mehr als 12 Personen: <a href="tel:{{PHONE}}">+49 2962 9766328</a>.</p>
   </form>
   <section id="reservation-review" hidden aria-labelledby="reservation-review-title">
     <h4 id="reservation-review-title" tabindex="-1">Ihre Reservierungsanfrage</h4>
     <pre id="reservation-message" class="request-message"></pre>
     <p>Ihr Tisch ist reserviert, sobald Sie eine Bestätigung von HANA erhalten.</p>
-    <a class="button full-width" id="send-reservation">Reservierung in WhatsApp öffnen ↗</a>
+    <button type="button" class="button full-width" id="send-reservation" aria-haspopup="dialog" aria-controls="reservation-email-dialog">E-Mail erneut öffnen ↗</button>
     <button type="button" class="button button-outline full-width" id="copy-reservation">Anfrage kopieren</button>
     <button type="button" class="text-link" id="edit-reservation">Angaben bearbeiten</button>
-    <p class="small booking-help">Es wurde noch keine Anfrage übermittelt. Senden Sie die vorbereitete Nachricht in WhatsApp ab.</p>
+    <p class="small booking-help">Es wurde noch keine Anfrage übermittelt. Wählen Sie eine E-Mail-App und senden Sie dort die vorbereitete Nachricht ab.</p>
     <p id="reservation-copy-status" role="status" class="small"></p>
   </section>
   <noscript><p>Für das Formular aktivieren Sie bitte JavaScript oder <a href="tel:{{PHONE}}">reservieren Sie telefonisch</a>.</p></noscript>
 </div>
+<dialog id="reservation-email-dialog" class="reservation-email-dialog" aria-labelledby="reservation-email-title" aria-describedby="reservation-email-help">
+  <div class="dialog-header"><h2 id="reservation-email-title">Reservierung senden</h2><button type="button" class="icon-button close-button" id="close-reservation-email" aria-label="E-Mail-Auswahl schließen">×</button></div>
+  <p id="reservation-email-help"></p>
+  <p class="small reservation-email-recipient">An: <strong id="reservation-email-address"></strong></p>
+  <div id="reservation-email-options">
+    <a id="reservation-gmail" class="button full-width">Gmail öffnen ↗</a>
+    <a id="reservation-mail" class="button button-outline full-width">Mail öffnen ↗</a>
+    <a id="reservation-gmail-web" class="text-link" target="_blank" rel="noopener noreferrer" hidden>Gmail im Browser öffnen ↗</a>
+  </div>
+  <button type="button" id="copy-reservation-email" class="text-link">Anfrage kopieren</button>
+  <p id="reservation-email-copy-status" role="status" class="small"></p>
+  <p class="small reservation-email-notice">Bitte senden Sie die E-Mail selbst ab. Ihr Tisch ist erst nach Bestätigung durch HANA reserviert.</p>
+</dialog>

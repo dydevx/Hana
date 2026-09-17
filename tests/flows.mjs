@@ -8,6 +8,11 @@ const browser=await chromium.launch();
 try {
  const context=await browser.newContext({viewport:{width:390,height:844},locale:'de-DE',permissions:['clipboard-read','clipboard-write']});
  const page=await context.newPage();
+ await page.addInitScript(()=>{
+  document.addEventListener('click',event=>{
+   if(event.target.closest('#reservation-email-options a'))event.preventDefault();
+  },true);
+ });
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.clock.install({time:new Date('2026-09-07T10:00:00Z')});
  await page.goto('http://127.0.0.1:3000/');
@@ -70,8 +75,19 @@ try {
  const message=await page.locator('#order-message').textContent();
  for(const text of ['28G. Gebratener Udon (Garnelen)','28B. Gebratener Udon (Hühnerfleisch)','213. Sake Nigiri','36,00','Ohne Koriander'])assert.ok(message.includes(text),text);
  const orderHref=await page.locator('#send-order').getAttribute('href');
- assert.ok(orderHref.startsWith('https://wa.me/4915257186870?text='));
- assert.ok(decodeURIComponent(orderHref).includes(message));
+ const orderEmail=new URL(orderHref);
+ assert.equal(orderEmail.origin,'https://mail.google.com');
+ assert.equal(orderEmail.searchParams.get('to'),'hanarnestaurant2022@gmail.com');
+ assert.equal(orderEmail.searchParams.get('su'),'Neue Bestellung – HANA Japanisches Restaurant');
+ assert.equal(orderEmail.searchParams.get('body'),message);
+ await expect(page.locator('#send-order')).toHaveText('Bestellung in Gmail öffnen ↗');
+ await context.route('https://mail.google.com/**',route=>route.fulfill({contentType:'text/html',body:'<p>Gmail compose test. No email sent.</p>'}));
+ const orderPopupPromise=context.waitForEvent('page');
+ await page.locator('#send-order').click();
+ const orderPopup=await orderPopupPromise;await orderPopup.waitForLoadState();
+ assert.equal(new URL(orderPopup.url()).searchParams.get('body'),message);
+ assert.equal(new URL(orderPopup.url()).searchParams.get('to'),'hanarnestaurant2022@gmail.com');
+ await orderPopup.close();
  await page.locator('#copy-order').click();
  await expect(page.locator('#order-copy-status')).toContainText('kopiert');
  let axe=await new AxeBuilder({page}).analyze();assert.deepEqual(axe.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),[]);
@@ -98,9 +114,19 @@ try {
  await booking.locator('[type=submit]').click();
  assert.equal(await page.locator('#reservation-review').isVisible(),true);
  assert.match(await page.locator('#reservation-message').textContent(),/Personen: 4/);
- const bookingHref=await page.locator('#send-reservation').getAttribute('href');
- assert.ok(bookingHref.startsWith('https://wa.me/4915257186870?text='));
- for(const text of ['Datum: 2026-09-08','18:30 Uhr','Kinderstuhl','test@example.com'])assert.ok(decodeURIComponent(bookingHref).includes(text),text);
+ await expect(page.locator('#reservation-email-dialog')).toBeVisible();
+ const bookingEmail=new URL(await page.locator('#reservation-gmail').getAttribute('href'));
+ assert.equal(bookingEmail.origin,'https://mail.google.com');
+ assert.equal(bookingEmail.searchParams.get('to'),'info@hana84.co');
+ for(const text of ['Datum: 2026-09-08','18:30 Uhr','Kinderstuhl','test@example.com'])assert.ok(bookingEmail.searchParams.get('body').includes(text),text);
+ const nativeMail=new URL(await page.locator('#reservation-mail').getAttribute('href'));
+ assert.equal(nativeMail.protocol,'mailto:');
+ assert.equal(nativeMail.searchParams.get('body'),bookingEmail.searchParams.get('body'));
+ await page.locator('#copy-reservation-email').click();
+ await expect(page.locator('#reservation-email-copy-status')).toContainText('kopiert');
+ await page.keyboard.press('Escape');
+ await expect(page.locator('#reservation-email-dialog')).not.toBeVisible();
+ await expect(page.locator('#send-reservation')).toBeFocused();
  await page.locator('#copy-reservation').click();
  await expect(page.locator('#reservation-copy-status')).toContainText('kopiert');
  await page.locator('#reservation-booking').screenshot({path:'test-results/reservation-review-mobile.png'});
@@ -108,6 +134,7 @@ try {
  await page.locator('#edit-reservation').click();
  assert.equal(await booking.locator('[name=name]').inputValue(),'Testgast Reservierung');
  await booking.locator('[type=submit]').click();
+ await page.keyboard.press('Escape');
  await page.clock.setSystemTime(new Date('2026-09-08T16:15:00Z'));
  await page.locator('#send-reservation').click();
  assert.equal(await booking.isVisible(),true);
