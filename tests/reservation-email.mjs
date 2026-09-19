@@ -2,7 +2,7 @@ import { chromium, devices, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
-import { ORDER_EMAIL_ADDRESS } from '../assets/js/config.js';
+import { WHATSAPP_NUMBER } from '../assets/js/config.js';
 
 await mkdir('test-results',{recursive:true});
 const browser=await chromium.launch();
@@ -14,11 +14,14 @@ try {
  ]) {
   const context=await browser.newContext({...settings,locale:'de-DE'});
   const page=await context.newPage();
-  if(name==='desktop')await context.route('https://mail.google.com/**',route=>route.fulfill({contentType:'text/html',body:'<p>Gmail compose test target. No email sent.</p>'}));
+  if(name==='desktop'){
+   await context.route('https://mail.google.com/**',route=>route.fulfill({contentType:'text/html',body:'<p>Gmail compose test target. No email sent.</p>'}));
+   await context.route('https://wa.me/**',route=>route.fulfill({contentType:'text/html',body:'<p>WhatsApp test target. No message sent.</p>'}));
+  }
   else await page.addInitScript(()=>{
    window.emailLaunches=[];
    document.addEventListener('click',event=>{
-    const link=event.target.closest('#reservation-email-options a, #send-order, #order-other-mail, #order-gmail-web');
+    const link=event.target.closest('#reservation-email-options a, #send-order');
     if(link){window.emailLaunches.push(link.href);event.preventDefault();}
    },true);
   });
@@ -37,24 +40,21 @@ try {
   await order.locator('[type=submit]').click();
   const orderMessage=await page.locator('#order-message').textContent();
   const orderHref=await page.locator('#send-order').getAttribute('href');
-  assert.equal(new URL(orderHref).protocol,name==='desktop'?'https:':name==='iphone'?'mailto:':'intent:');
-  assert.equal(new URL(orderHref).searchParams.get('body'),orderMessage);
+  assert.equal(new URL(orderHref).origin,'https://wa.me');
+  assert.equal(new URL(orderHref).pathname,`/${WHATSAPP_NUMBER.replace(/\D/g,'')}`);
+  assert.equal(new URL(orderHref).searchParams.get('text'),orderMessage);
   const orderPopupPromise=name==='desktop'?context.waitForEvent('page'):null;
   await page.locator('#send-order').click();
   if(orderPopupPromise){
    const popup=await orderPopupPromise;await popup.waitForLoadState();
    const compose=new URL(popup.url());
-   assert.equal(compose.origin,'https://mail.google.com');
-   assert.equal(compose.searchParams.get('to'),ORDER_EMAIL_ADDRESS);
-   assert.equal(compose.searchParams.get('body'),orderMessage);
+   assert.equal(compose.origin,'https://wa.me');
+   assert.equal(compose.pathname,`/${WHATSAPP_NUMBER.replace(/\D/g,'')}`);
+   assert.equal(compose.searchParams.get('text'),orderMessage);
    await popup.close();
   }else{
    assert.equal(await page.evaluate(()=>window.emailLaunches.length),1);
    assert.equal(await page.evaluate(()=>window.emailLaunches[0]),orderHref);
-   assert.equal(new URL(await page.locator('#order-other-mail').getAttribute('href')).protocol,name==='iphone'?'googlegmail:':'mailto:');
-   const fallback=new URL(await page.locator('#order-gmail-web').getAttribute('href'));
-   assert.equal(fallback.searchParams.get('to'),ORDER_EMAIL_ADDRESS);
-   assert.equal(fallback.searchParams.get('body'),orderMessage);
    await page.evaluate(()=>{window.emailLaunches=[];});
   }
   const orderAxe=await new AxeBuilder({page}).analyze();
@@ -117,5 +117,5 @@ try {
   assert.deepEqual(errors,[]);
   await context.close();
  }
- console.log('Orders and reservations: desktop Gmail tabs open (network mocked); iPhone Mail and Android Gmail navigation attempts preserve full payloads and fallback links. Invalid submits, reopening, expired-time guard, responsive layout and accessibility passed. No email sent; native apps require real-device verification.');
+ console.log('Orders open WhatsApp links with complete text on desktop and mobile; reservation email options, invalid submits, time guard, responsive layout and accessibility passed. No message sent.');
 } finally {await browser.close();}

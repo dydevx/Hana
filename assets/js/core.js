@@ -65,5 +65,10 @@ export function sanitizeCart(raw, items) {
 }
 export const cartTotal = (cart, items) => cart.reduce((sum,row)=>sum+items.get(row.id).priceCents*row.quantity,0);
 export function orderMessage(data, cart, items, billLink = '') {
-  return ['Neue Bestellung – HANA Japanisches Restaurant', '', `Name: ${data.name}`, `Telefon: ${data.phone}`, `E-Mail: ${data.email||'–'}`, `Abholdatum: ${data.date}`, `Abholzeit: ${data.time} Uhr`, '', 'Bestellung:', ...cart.map(row=>{const i=items.get(row.id);return `${i.number}. ${i.name}${i.variant?' ('+i.variant+')':''}${i.quantityLabel?' · '+i.quantityLabel:''} × ${row.quantity} – ${money(i.priceCents*row.quantity)}`;}),'',`Gesamt: ${money(cartTotal(cart,items))}`,'Zahlung bei Abholung','',`Hinweis: ${data.notes||'–'}`,...(billLink?['','Bestellbeleg öffnen und drucken:',billLink]:[])].join('\n');
+  return ['Neue Bestellung – HANA Japanisches Restaurant', '', `Name: ${data.name}`, `Telefon: ${data.phone}`, `Abholdatum: ${data.date}`, `Abholzeit: ${data.time} Uhr`, '', 'Bestellung:', ...cart.map(row=>{const i=items.get(row.id);return `${i.number}. ${i.name}${i.variant?' ('+i.variant+')':''}${i.quantityLabel?' · '+i.quantityLabel:''} × ${row.quantity} – ${money(i.priceCents*row.quantity)}`;}),'',`Gesamt: ${money(cartTotal(cart,items))}`,'Zahlung bei Abholung','',`Hinweis: ${data.notes||'–'}`,...(billLink?['','Bestellbeleg öffnen und drucken:',billLink]:[])].join('\n');
+}
+export function whatsAppOrderLink(phone, message) {
+  const digits=String(phone).replace(/\D/g,'');
+  if(!/^[1-9]\d{7,14}$/.test(digits))throw new Error('Invalid WhatsApp phone number');
+  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 }

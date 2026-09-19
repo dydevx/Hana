@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { germanNow, isHoliday, isOpen, pickupSlots, sanitizeCart, cartTotal, orderMessage, escapeHTML } from '../assets/js/core.js';
+import { germanNow, isHoliday, isOpen, pickupSlots, sanitizeCart, cartTotal, orderMessage, whatsAppOrderLink, escapeHTML } from '../assets/js/core.js';
 test('German timezone respects summer and winter offsets',()=>{assert.deepEqual(germanNow(new Date('2026-07-01T22:30:00Z')),{date:'2026-07-02',minutes:30});assert.equal(germanNow(new Date('2026-01-01T12:00:00Z')).minutes,780);});
 test('Weekday opening boundaries and midday closure',()=>{assert.equal(isOpen(new Date('2026-09-07T10:00:00Z')),true);assert.equal(isOpen(new Date('2026-09-07T12:30:00Z')),false);assert.equal(isOpen(new Date('2026-09-07T15:00:00Z')),true);assert.equal(isOpen(new Date('2026-09-07T20:00:00Z')),false);});
 test('NRW holidays include Easter-derived dates and weekend hours',()=>{for(const date of ['2026-04-03','2026-04-06','2026-05-14','2026-05-25','2026-06-04','2026-11-01'])assert.equal(isHoliday(date),true,date);assert.equal(isHoliday('2026-09-07'),false);assert.equal(isOpen(new Date('2026-04-06T14:00:00Z')),true);});
@@ -10,3 +10,10 @@ const items=new Map([['test-a',{id:'test-a',number:'TEST-1',name:'Testgericht',p
 test('Cart ignores hostile, malformed and unavailable entries',()=>{assert.deepEqual(sanitizeCart([{id:'test-a',quantity:2},{id:'test-a',quantity:1},{id:'missing',quantity:1},{id:'test-b',quantity:-5},null],items),[{id:'test-a',quantity:3}]);assert.deepEqual(sanitizeCart({},items),[]);assert.equal(sanitizeCart([{id:'test-a',quantity:999999}],items)[0].quantity,99);});
 test('Totals use integer cents and order preserves variant and contact data',()=>{const cart=[{id:'test-a',quantity:2},{id:'test-b',quantity:1}];assert.equal(cartTotal(cart,items),702);const text=orderMessage({name:'Test',phone:'123456',date:'2026-09-08',time:'12:30',notes:'Testhinweis'},cart,items);assert.match(text,/Gesamt: 7,02/);assert.match(text,/Testvariante/);assert.match(text,/Testhinweis/);});
 test('HTML escapes all injection-sensitive characters',()=>{assert.equal(escapeHTML('<img src="x">&'), '&lt;img src=&quot;x&quot;&gt;&amp;');});
+test('WhatsApp order link preserves the full message and international phone',()=>{
+ const message='Neue Bestellung – HANA\n2 × Udon\nBestellbeleg: https://example.com/#bill=abc';
+ const url=new URL(whatsAppOrderLink('+49 1525 7186870',message));
+ assert.equal(url.origin,'https://wa.me');
+ assert.equal(url.pathname,'/4915257186870');
+ assert.equal(url.searchParams.get('text'),message);
+});

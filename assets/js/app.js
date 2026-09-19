@@ -1,9 +1,8 @@
 import * as config from './config.js';
 import { MENU } from './menu.js';
-import { money, escapeHTML as e, germanNow, addDays, isOpen, pickupSlots, sanitizeCart, cartTotal, orderMessage } from './core.js';
+import { money, escapeHTML as e, germanNow, addDays, isOpen, pickupSlots, sanitizeCart, cartTotal, orderMessage, whatsAppOrderLink } from './core.js';
 import { initMotion } from './motion.js';
 import { initReservation } from './reservation.js';
-import { emailPlatform, emailComposeLinks } from './email-compose.js';
 import { getCartItems, calculateBill, billDetails, createBillLink, readBillLink } from './bill.js';
 const $=selector=>document.querySelector(selector);
 const $$=selector=>[...document.querySelectorAll(selector)];
@@ -196,10 +195,6 @@ $('#close-bill').addEventListener('click',closeBill);
 window.addEventListener('beforeprint',prepareBillPrint);
 window.addEventListener('hashchange',openBillFromLink);
 openBillFromLink();
-const orderPlatform=emailPlatform(navigator);
-const orderAlternatives=document.createElement('div');
-orderAlternatives.innerHTML='<a id="order-other-mail" class="text-link full-width"></a><a id="order-gmail-web" class="text-link full-width" target="_blank" rel="noopener noreferrer">Gmail im Browser öffnen ↗</a>';
-$('#send-order').after(orderAlternatives);
 function updateSlots(){const select=form.elements.time;const previous=select.value;const slots=pickupSlots(form.elements.date.value);select.innerHTML=`<option value="">${slots.length?'Bitte wählen':'Keine Abholzeit verfügbar'}</option>`+slots.map(time=>`<option value="${time}">${time} Uhr</option>`).join('');if(slots.includes(previous))select.value=previous;}
 $('#checkout-button').addEventListener('click',()=>{if(!cart.length)return;$('#checkout').hidden=false;$('#order-review').hidden=true;const today=germanNow().date;form.elements.date.min=today;if(!form.elements.date.value||form.elements.date.value<today)form.elements.date.value=pickupSlots(today).length?today:addDays(today,1);updateSlots();form.elements.name.focus();});
 form.elements.date.addEventListener('change',updateSlots);
@@ -213,19 +208,12 @@ form.addEventListener('submit',event=>{
  const billLink=createBillLink(snapshot,location.href);
  message=orderMessage(data,cart,items,billLink);$('#order-message').textContent=message;
  const send=$('#send-order');
- const links=emailComposeLinks(config.ORDER_EMAIL_ADDRESS,'Neue Bestellung – HANA Japanisches Restaurant',message,orderPlatform);
- send.href=orderPlatform==='ios'?links.mail:links.gmail;
- send.textContent=orderPlatform==='desktop'?'Bestellung in Gmail öffnen ↗':orderPlatform==='ios'?'Bestellung in Mail öffnen ↗':'Bestellung in Gmail-App öffnen ↗';
- if(orderPlatform==='desktop'){send.target='_blank';send.rel='noopener noreferrer';}
- else{send.removeAttribute('target');send.removeAttribute('rel');}
- $('#order-other-mail').href=orderPlatform==='ios'?links.gmail:links.mail;
- $('#order-other-mail').textContent=orderPlatform==='ios'?'Gmail-App öffnen ↗':'Andere E-Mail-App öffnen ↗';
- $('#order-gmail-web').href=links.web;$('#order-gmail-web').hidden=orderPlatform==='desktop';
+ send.href=whatsAppOrderLink(config.WHATSAPP_NUMBER,message);
  $('#checkout').hidden=true;$('#order-review').hidden=false;$('#cart-items').hidden=true;$('#cart-footer').hidden=true;$('#create-bill').hidden=true;
  const reviewTitle=$('#order-review h3');reviewTitle.tabIndex=-1;reviewTitle.focus({preventScroll:true});$('#cart-dialog').scrollTop=0;
 });
 $('#copy-order').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(message);$('#order-copy-status').textContent='Bestellung kopiert.';}catch{const range=document.createRange();range.selectNodeContents($('#order-message'));const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);$('#order-copy-status').textContent='Bitte kopieren Sie den markierten Bestelltext.';}});
-for(const link of [$('#send-order'),$('#order-other-mail'),$('#order-gmail-web')])link.addEventListener('click',event=>{if(!pickupSlots(form.elements.date.value).includes(form.elements.time.value)){event.preventDefault();renderCart();$('#order-review').hidden=true;$('#checkout').hidden=false;$('#create-bill').hidden=false;$('#form-error').textContent='Die gewählte Abholzeit ist nicht mehr verfügbar. Bitte wählen Sie eine neue Zeit.';updateSlots();form.elements.time.focus();}});
+$('#send-order').addEventListener('click',event=>{if(!pickupSlots(form.elements.date.value).includes(form.elements.time.value)){event.preventDefault();renderCart();$('#order-review').hidden=true;$('#checkout').hidden=false;$('#create-bill').hidden=false;$('#form-error').textContent='Die gewählte Abholzeit ist nicht mehr verfügbar. Bitte wählen Sie eine neue Zeit.';updateSlots();form.elements.time.focus();}});
 $('#edit-order').addEventListener('click',()=>{renderCart();$('#order-review').hidden=true;$('#checkout').hidden=false;$('#create-bill').hidden=false;form.elements.name.focus();});
 window.addEventListener('storage',event=>{if(event.key!==storageKey)return;try{cart=sanitizeCart(JSON.parse(event.newValue||'[]'),items);resetCheckout();renderCart();}catch{}});
 const photos=$$('[data-photo]');let photoIndex=0;

@@ -99,7 +99,10 @@ try {
   const message=await page.locator('#order-message').textContent();
   const printLink=message.match(/https?:\/\/\S+#bill=[A-Za-z0-9_-]+/)?.[0];
   assert.ok(printLink, 'Order email must contain a print link');
-  assert.equal(new URL(await page.locator('#send-order').getAttribute('href')).searchParams.get('body'),message);
+  const whatsApp=new URL(await page.locator('#send-order').getAttribute('href'));
+  assert.equal(whatsApp.origin,'https://wa.me');
+  assert.equal(whatsApp.pathname,'/4915257186870');
+  assert.equal(whatsApp.searchParams.get('text'),message);
 
   const ownerContext=await browser.newContext({viewport:{width:390,height:844}});
   const owner=await ownerContext.newPage();
@@ -115,7 +118,7 @@ try {
   assert.match(await owner.locator('#bill-page-size').evaluate(style => style.textContent),/size: 58mm/);
   await ownerContext.close();
   assert.deepEqual(errors,[]);
-  console.log('Bill creation, emailed print link on a clean browser, cart updates, customer details and 80/58mm print CSS passed.');
+  console.log('Bill creation, WhatsApp print link on a clean browser, cart updates, customer details and 80/58mm print CSS passed.');
 } finally {
   await browser.close();
 }

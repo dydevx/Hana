@@ -22,13 +22,13 @@ The interface uses the charcoal/champagne-gold/ivory palette of the supplied PDF
 
 The current supplied `MENU.pdf` is transcribed in `assets/js/menu.js`: 17 categories, 124 dish groups and 174 separately priced items/variants. The current downloadable copy is available at `assets/menu/speisekarte.pdf`. Menu numbers, prices, piece counts and source allergen codes are retained. Fifty-two food photographs are cropped directly from the same PDF and attached only to matching or clearly representative dishes. See `MENU-REVIEW.md` for source inconsistencies.
 
-Customers can search by name, number or ingredient, filter vegetarian/spicy choices, select a protein, and add dishes to a persistent cart. Each variant has its own ID and price. Checkout validates contact details and pickup times, shows an itemized review, and offers a prefilled email to the configured `ORDER_EMAIL_ADDRESS`. The message includes a print link carrying an order snapshot for the restaurant. The send button opens Gmail in a new tab on desktop, the default Mail app on iPhone/iPad, and Gmail on Android. Alternate app links and Gmail web remain available. The copy button provides an alternative if an email application cannot be opened. Changing the cart invalidates the review and retains entered contact details in page memory.
+Customers can search by name, number or ingredient, filter vegetarian/spicy choices, select a protein, and add dishes to a persistent cart. Each variant has its own ID and price. Checkout validates contact details and pickup times, shows an itemized review, and opens a prefilled WhatsApp message to the configured `WHATSAPP_NUMBER`. The message includes a print link carrying an order snapshot for the restaurant. The customer sends the prepared WhatsApp message themselves. The copy button provides an alternative if WhatsApp cannot be opened. Changing the cart invalidates the review and retains entered contact details in page memory.
 
 The restaurant can open the print link on another device and choose 80 mm or 58 mm in the bill dialog before selecting its printer in the browser print dialog.
 
 The reservation form collects party size, date/time, name, phone, optional email and wishes. A valid submit immediately attempts to open Gmail web on desktop, the default Mail app on iPhone/iPad, or Gmail on Android. The email-app chooser remains available for reopening or selecting another app. iPhone/iPad also offers Gmail via its app URL scheme; Android uses a Gmail-targeted intent with a Gmail web fallback. Mobile has an explicit Gmail web link if an app cannot open. Reservations are addressed to `info@hana84.co`. It never claims the restaurant has received or accepted a booking. Personal details are not written to localStorage. Only dish IDs and quantities persist.
 
-The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widget. HANA has no verified Resmio account/widget URL in this workspace. Orders open prefilled emails to the configured order address; reservations use an email chooser with prefilled messages to `info@hana84.co`. Customers send the prepared request themselves and wait for confirmation.
+The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widget. HANA has no verified Resmio account/widget URL in this workspace. Orders open a prefilled WhatsApp chat to `+4915257186870`; reservations use an email chooser with prefilled messages to `info@hana84.co`. Customers send the prepared request themselves and wait for confirmation.
 
 ## Editing
 
@@ -52,10 +52,10 @@ Run `npm run build` after edits. The opening schedule retains the previously sup
 
 ## Operational configuration before launch
 
-- Confirm email ordering and reservation handling with HANA. Customers must send the prepared message and wait for a reply; there is no automatic submission, table inventory, online payment or acceptance guarantee.
+- Confirm WhatsApp ordering and reservation handling with HANA. Customers must send the prepared message and wait for a reply; there is no automatic submission, table inventory, online payment or acceptance guarantee.
 - Scheduling defaults are configurable: pickup lead 30 minutes, reservation lead 30 minutes, reservation duration 60 minutes, booking horizon 90 days. Requests for more than 12 guests are directed to the restaurant's phone number. These are website request limits, not a claim about restaurant capacity.
 - Complete the existing legal operator and hosting/privacy drafts in `scripts/build.mjs` before publication.
-- `RESERVATION_URL` can point the reservation CTA to a verified HANA booking provider. Do not use Mai Wok's account. `ORDER_EMAIL_ADDRESS` controls the order email destination; `EMAIL_ADDRESS` controls the reservation email destination. `WHATSAPP_NUMBER` is retained as contact configuration; reservations now use email.
+- `RESERVATION_URL` can point the reservation CTA to a verified HANA booking provider. Do not use Mai Wok's account. `WHATSAPP_NUMBER` controls the order destination; `EMAIL_ADDRESS` controls the reservation email destination.
 
 ## Deployment
 
