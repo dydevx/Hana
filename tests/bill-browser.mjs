@@ -67,6 +67,23 @@ try {
   assert.ok(Number(mediaBox[1]) <= 230, `PDF width ${mediaBox[1]}pt exceeds 80mm`);
   await page.emulateMedia({media:'screen'});
 
+  await page.locator('#bill-paper-width').selectOption('58');
+  assert.equal(await page.locator('#bill-dialog').getAttribute('data-paper-width'),'58');
+  assert.ok(await bill.evaluate(area => area.scrollWidth <= area.clientWidth + 1), '58mm bill content overflows');
+  await page.locator('#bill-dialog').screenshot({path:'test-results/bill-58-mobile.png'});
+  await page.locator('#print-bill').click();
+  await page.emulateMedia({media:'print'});
+  const narrowLayout=await page.evaluate(() => ({
+    width:document.querySelector('#billArea').getBoundingClientRect().width,
+    choice:getComputedStyle(document.querySelector('.bill-paper-choice')).display
+  }));
+  assert.ok(narrowLayout.width <= 58 * 96 / 25.4 + 0.5, JSON.stringify(narrowLayout));
+  assert.equal(narrowLayout.choice,'none');
+  const narrowPdf=await page.pdf({path:'test-results/bill-58.pdf',preferCSSPageSize:true});
+  const narrowBox=narrowPdf.toString('latin1').match(/\/MediaBox\s*\[\s*0\s+0\s+([\d.]+)\s+([\d.]+)/);
+  assert.ok(narrowBox && Number(narrowBox[1]) <= 167, 'PDF exceeds 58mm paper width');
+  await page.emulateMedia({media:'screen'});
+
   await page.locator('#close-bill').click();
   await expect(page.locator('#bill-dialog')).not.toBeVisible();
   await page.locator('[data-quantity="hana-213"][data-change="1"]').click();
@@ -91,12 +108,14 @@ try {
   await expect(owner.locator('#bill-dialog')).toBeVisible();
   await expect(owner.locator('#billArea')).toContainText('44,00');
   await expect(owner.locator('#billArea')).toContainText('Testgast <Hana>');
+  await owner.locator('#bill-paper-width').selectOption('58');
   await owner.evaluate(() => { window.print=() => { window.__printCalled=true; }; });
   await owner.locator('#print-bill').click();
   assert.equal(await owner.evaluate(() => window.__printCalled),true);
+  assert.match(await owner.locator('#bill-page-size').evaluate(style => style.textContent),/size: 58mm/);
   await ownerContext.close();
   assert.deepEqual(errors,[]);
-  console.log('Bill creation, emailed print link on a clean browser, cart updates, customer details and 80mm print CSS passed.');
+  console.log('Bill creation, emailed print link on a clean browser, cart updates, customer details and 80/58mm print CSS passed.');
 } finally {
   await browser.close();
 }

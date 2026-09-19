@@ -165,12 +165,19 @@ function createBill() {
  renderBill(calculateBill(rows),billDetails(new Date()),customer);
  $('#bill-dialog').showModal();
 }
+function setBillPaperWidth() {
+ const width=$('#bill-paper-width').value==='58'?58:80;
+ $('#bill-dialog').dataset.paperWidth=String(width);
+ document.documentElement.style.setProperty('--bill-paper-width',`${width}mm`);
+ return width;
+}
 function prepareBillPrint() {
  if(!$('#bill-dialog').open)return;
+ const widthMm=setBillPaperWidth();
  let pageSize=$('#bill-page-size');
  if(!pageSize){pageSize=document.createElement('style');pageSize.id='bill-page-size';document.head.append(pageSize);}
  const heightMm=Math.ceil($('#billArea').scrollHeight*25.4/96)+5;
- pageSize.textContent=`@page { size: 80mm ${heightMm}mm; margin: 0; }`;
+ pageSize.textContent=`@page { size: ${widthMm}mm ${heightMm}mm; margin: 0; }`;
 }
 function printBill() { if($('#bill-dialog').open){prepareBillPrint();window.print();} }
 function closeBill() { $('#bill-dialog').close(); if($('#cart-dialog').open && !$('#create-bill').hidden) $('#create-bill').focus(); }
@@ -182,6 +189,8 @@ function openBillFromLink() {
  if(!$('#bill-dialog').open)$('#bill-dialog').showModal();
 }
 $('#create-bill').addEventListener('click',createBill);
+$('#bill-paper-width').addEventListener('change',setBillPaperWidth);
+setBillPaperWidth();
 $('#print-bill').addEventListener('click',printBill);
 $('#close-bill').addEventListener('click',closeBill);
 window.addEventListener('beforeprint',prepareBillPrint);
