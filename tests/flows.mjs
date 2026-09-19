@@ -2,6 +2,7 @@ import { chromium, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
+import { ORDER_EMAIL_ADDRESS } from '../assets/js/config.js';
 
 await mkdir('test-results',{recursive:true});
 const browser=await chromium.launch();
@@ -77,7 +78,7 @@ try {
  const orderHref=await page.locator('#send-order').getAttribute('href');
  const orderEmail=new URL(orderHref);
  assert.equal(orderEmail.origin,'https://mail.google.com');
- assert.equal(orderEmail.searchParams.get('to'),'hanarnestaurant2022@gmail.com');
+ assert.equal(orderEmail.searchParams.get('to'),ORDER_EMAIL_ADDRESS);
  assert.equal(orderEmail.searchParams.get('su'),'Neue Bestellung – HANA Japanisches Restaurant');
  assert.equal(orderEmail.searchParams.get('body'),message);
  await expect(page.locator('#send-order')).toHaveText('Bestellung in Gmail öffnen ↗');
@@ -86,7 +87,7 @@ try {
  await page.locator('#send-order').click();
  const orderPopup=await orderPopupPromise;await orderPopup.waitForLoadState();
  assert.equal(new URL(orderPopup.url()).searchParams.get('body'),message);
- assert.equal(new URL(orderPopup.url()).searchParams.get('to'),'hanarnestaurant2022@gmail.com');
+ assert.equal(new URL(orderPopup.url()).searchParams.get('to'),ORDER_EMAIL_ADDRESS);
  await orderPopup.close();
  await page.locator('#copy-order').click();
  await expect(page.locator('#order-copy-status')).toContainText('kopiert');

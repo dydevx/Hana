@@ -4,6 +4,7 @@ import { money, escapeHTML as e, germanNow, addDays, isOpen, pickupSlots, saniti
 import { initMotion } from './motion.js';
 import { initReservation } from './reservation.js';
 import { emailPlatform, emailComposeLinks } from './email-compose.js';
+import { getCartItems, calculateBill, billDetails, createBillLink, readBillLink } from './bill.js';
 const $=selector=>document.querySelector(selector);
 const $$=selector=>[...document.querySelectorAll(selector)];
 const items=new Map((MENU.verified?MENU.categories:[]).flatMap(category=>category.items).map(item=>[item.id,item]));
@@ -13,7 +14,7 @@ let timer;
 function notify(message){$('#toast').textContent=message;$('#toast').classList.add('visible');clearTimeout(timer);timer=setTimeout(()=>$('#toast').classList.remove('visible'),3500);}
 try{cart=sanitizeCart(JSON.parse(localStorage.getItem(storageKey)||'[]'),items);}catch{cart=[];}
 function save(){try{localStorage.setItem(storageKey,JSON.stringify(cart));}catch{notify('Ihr Browser kann den Warenkorb nicht dauerhaft speichern.');}}
-function resetCheckout(){ $('#checkout').hidden=true;$('#order-review').hidden=true;$('#order-copy-status').textContent=''; }
+function resetCheckout(){ $('#checkout').hidden=true;$('#order-review').hidden=true;$('#create-bill').hidden=false;$('#order-copy-status').textContent=''; }
 function renderCart(){
  $('#cart-items').hidden=false;
  const count=cart.reduce((sum,row)=>sum+row.quantity,0);
@@ -130,6 +131,62 @@ $('#menu-prev')?.addEventListener('click',()=>{if(menuPage>1){menuPage--;filterM
 $('#menu-next')?.addEventListener('click',()=>{menuPage++;filterMenu();$('#menu-content').scrollIntoView({block:'start'});});
 filterMenu();
 const form=$('#order-form');
+function renderBill(bill, details, customer) {
+ const rowHTML=bill.rows.map(row=>`
+  <div class="bill-row">
+   <div class="bill-row-name">${row.quantity} × ${e(row.number)}. ${e(row.name)}</div>
+   ${row.variant?`<div class="bill-option">${e(row.variant)}</div>`:''}
+   ${row.quantityLabel?`<div class="bill-option">${e(row.quantityLabel)}</div>`:''}
+   <div class="bill-row-detail"><span>${money(row.unitPriceCents)} × ${row.quantity}</span><span>${money(row.lineTotalCents)}</span></div>
+  </div>`).join('');
+ const customerFields=[
+  ['Name',customer.name],
+  ['Telefon',customer.phone],
+  ['Abholdatum',customer.date?.split('-').reverse().join('.')],
+  ['Abholzeit',customer.time?`${customer.time} Uhr`:''],
+  ['Hinweise',customer.notes]
+ ];
+ const customerHTML=customerFields.filter(([,value])=>value).map(([label,value])=>`<p><strong>${label}</strong>${e(value)}</p>`).join('');
+ $('#billArea').innerHTML=`
+  <div class="bill-header"><strong>${e(config.RESTAURANT_NAME)}</strong><p>${e(config.ADDRESS)}</p><p>${e(config.PHONE_NUMBER)}</p></div>
+  <div class="bill-meta bill-section"><p>Beleg: ${e(details.number)}</p><p>${e(details.date)} · ${e(details.time)} Uhr</p></div>
+  <div class="bill-items bill-section">${rowHTML}</div>
+  <div class="bill-summary bill-section">
+   <div class="bill-summary-line"><span>Zwischensumme</span><strong>${money(bill.subtotalCents)}</strong></div>
+   <div class="bill-summary-line bill-total"><span>Gesamt</span><strong>${money(bill.totalCents)}</strong></div>
+  </div>
+  <div class="bill-customer bill-section"><p><strong>Art</strong>Abholung</p><p><strong>Zahlung</strong>Bei Abholung</p>${customerHTML}</div>
+  <div class="bill-footer bill-section"><p>Vielen Dank!</p></div>`;
+}
+function createBill() {
+ const rows=getCartItems(cart,items);
+ if(!rows.length){notify('Ihr Warenkorb ist leer.');return;}
+ const customer=$('#checkout').hidden?{}:Object.fromEntries(['name','phone','date','time','notes'].map(key=>[key,form.elements[key].value.trim()]));
+ renderBill(calculateBill(rows),billDetails(new Date()),customer);
+ $('#bill-dialog').showModal();
+}
+function prepareBillPrint() {
+ if(!$('#bill-dialog').open)return;
+ let pageSize=$('#bill-page-size');
+ if(!pageSize){pageSize=document.createElement('style');pageSize.id='bill-page-size';document.head.append(pageSize);}
+ const heightMm=Math.ceil($('#billArea').scrollHeight*25.4/96)+5;
+ pageSize.textContent=`@page { size: 80mm ${heightMm}mm; margin: 0; }`;
+}
+function printBill() { if($('#bill-dialog').open){prepareBillPrint();window.print();} }
+function closeBill() { $('#bill-dialog').close(); if($('#cart-dialog').open && !$('#create-bill').hidden) $('#create-bill').focus(); }
+function openBillFromLink() {
+ if(!location.hash.startsWith('#bill='))return;
+ const snapshot=readBillLink(location.hash);
+ if(!snapshot){notify('Der Drucklink ist ungültig oder beschädigt.');return;}
+ renderBill(calculateBill(snapshot.rows),snapshot.details,snapshot.customer);
+ if(!$('#bill-dialog').open)$('#bill-dialog').showModal();
+}
+$('#create-bill').addEventListener('click',createBill);
+$('#print-bill').addEventListener('click',printBill);
+$('#close-bill').addEventListener('click',closeBill);
+window.addEventListener('beforeprint',prepareBillPrint);
+window.addEventListener('hashchange',openBillFromLink);
+openBillFromLink();
 const orderPlatform=emailPlatform(navigator);
 const orderAlternatives=document.createElement('div');
 orderAlternatives.innerHTML='<a id="order-other-mail" class="text-link full-width"></a><a id="order-gmail-web" class="text-link full-width" target="_blank" rel="noopener noreferrer">Gmail im Browser öffnen ↗</a>';
@@ -143,7 +200,9 @@ form.addEventListener('submit',event=>{
  if(!cart.length){$('#form-error').textContent='Bitte wählen Sie zuerst ein Gericht.';return;}
  if(data.name.length<2 || !/^[+\d() /-]{6,30}$/.test(data.phone)){ $('#form-error').textContent='Bitte geben Sie Ihren vollständigen Namen und eine gültige Telefonnummer ein.';return; }
  if(!pickupSlots(data.date).includes(data.time)){$('#form-error').textContent='Bitte wählen Sie eine verfügbare Abholzeit innerhalb unserer Öffnungszeiten.';updateSlots();return;}
- message=orderMessage(data,cart,items);$('#order-message').textContent=message;
+ const snapshot={version:1,details:billDetails(new Date()),rows:getCartItems(cart,items),customer:{name:data.name,phone:data.phone,date:data.date,time:data.time,notes:data.notes}};
+ const billLink=createBillLink(snapshot,location.href);
+ message=orderMessage(data,cart,items,billLink);$('#order-message').textContent=message;
  const send=$('#send-order');
  const links=emailComposeLinks(config.ORDER_EMAIL_ADDRESS,'Neue Bestellung – HANA Japanisches Restaurant',message,orderPlatform);
  send.href=orderPlatform==='ios'?links.mail:links.gmail;
@@ -153,12 +212,12 @@ form.addEventListener('submit',event=>{
  $('#order-other-mail').href=orderPlatform==='ios'?links.gmail:links.mail;
  $('#order-other-mail').textContent=orderPlatform==='ios'?'Gmail-App öffnen ↗':'Andere E-Mail-App öffnen ↗';
  $('#order-gmail-web').href=links.web;$('#order-gmail-web').hidden=orderPlatform==='desktop';
- $('#checkout').hidden=true;$('#order-review').hidden=false;$('#cart-items').hidden=true;$('#cart-footer').hidden=true;
+ $('#checkout').hidden=true;$('#order-review').hidden=false;$('#cart-items').hidden=true;$('#cart-footer').hidden=true;$('#create-bill').hidden=true;
  const reviewTitle=$('#order-review h3');reviewTitle.tabIndex=-1;reviewTitle.focus({preventScroll:true});$('#cart-dialog').scrollTop=0;
 });
 $('#copy-order').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(message);$('#order-copy-status').textContent='Bestellung kopiert.';}catch{const range=document.createRange();range.selectNodeContents($('#order-message'));const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);$('#order-copy-status').textContent='Bitte kopieren Sie den markierten Bestelltext.';}});
-for(const link of [$('#send-order'),$('#order-other-mail'),$('#order-gmail-web')])link.addEventListener('click',event=>{if(!pickupSlots(form.elements.date.value).includes(form.elements.time.value)){event.preventDefault();renderCart();$('#order-review').hidden=true;$('#checkout').hidden=false;$('#form-error').textContent='Die gewählte Abholzeit ist nicht mehr verfügbar. Bitte wählen Sie eine neue Zeit.';updateSlots();form.elements.time.focus();}});
-$('#edit-order').addEventListener('click',()=>{renderCart();$('#order-review').hidden=true;$('#checkout').hidden=false;form.elements.name.focus();});
+for(const link of [$('#send-order'),$('#order-other-mail'),$('#order-gmail-web')])link.addEventListener('click',event=>{if(!pickupSlots(form.elements.date.value).includes(form.elements.time.value)){event.preventDefault();renderCart();$('#order-review').hidden=true;$('#checkout').hidden=false;$('#create-bill').hidden=false;$('#form-error').textContent='Die gewählte Abholzeit ist nicht mehr verfügbar. Bitte wählen Sie eine neue Zeit.';updateSlots();form.elements.time.focus();}});
+$('#edit-order').addEventListener('click',()=>{renderCart();$('#order-review').hidden=true;$('#checkout').hidden=false;$('#create-bill').hidden=false;form.elements.name.focus();});
 window.addEventListener('storage',event=>{if(event.key!==storageKey)return;try{cart=sanitizeCart(JSON.parse(event.newValue||'[]'),items);resetCheckout();renderCart();}catch{}});
 const photos=$$('[data-photo]');let photoIndex=0;
 function showPhoto(index){photoIndex=(index+photos.length)%photos.length;const photo=photos[photoIndex];$('#lightbox-image').src=photo.dataset.photo;$('#lightbox-image').alt=photo.dataset.caption;$('#lightbox-caption').textContent=`${photoIndex+1} / ${photos.length} · ${photo.dataset.caption}`;}

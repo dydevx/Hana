@@ -2,6 +2,7 @@ import { chromium, devices, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
+import { ORDER_EMAIL_ADDRESS } from '../assets/js/config.js';
 
 await mkdir('test-results',{recursive:true});
 const browser=await chromium.launch();
@@ -44,7 +45,7 @@ try {
    const popup=await orderPopupPromise;await popup.waitForLoadState();
    const compose=new URL(popup.url());
    assert.equal(compose.origin,'https://mail.google.com');
-   assert.equal(compose.searchParams.get('to'),'hanarnestaurant2022@gmail.com');
+   assert.equal(compose.searchParams.get('to'),ORDER_EMAIL_ADDRESS);
    assert.equal(compose.searchParams.get('body'),orderMessage);
    await popup.close();
   }else{
@@ -52,7 +53,7 @@ try {
    assert.equal(await page.evaluate(()=>window.emailLaunches[0]),orderHref);
    assert.equal(new URL(await page.locator('#order-other-mail').getAttribute('href')).protocol,name==='iphone'?'googlegmail:':'mailto:');
    const fallback=new URL(await page.locator('#order-gmail-web').getAttribute('href'));
-   assert.equal(fallback.searchParams.get('to'),'hanarnestaurant2022@gmail.com');
+   assert.equal(fallback.searchParams.get('to'),ORDER_EMAIL_ADDRESS);
    assert.equal(fallback.searchParams.get('body'),orderMessage);
    await page.evaluate(()=>{window.emailLaunches=[];});
   }

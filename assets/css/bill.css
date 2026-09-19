@@ -1,0 +1,65 @@
+.bill-dialog {
+  width: min(100mm, calc(100vw - 24px));
+  max-width: none;
+  max-height: 92dvh;
+  overflow-y: auto;
+  padding: 18px;
+  border: 0;
+  background: #fff;
+  color: #000;
+}
+.bill-dialog #bill-dialog-title {
+  margin: 0 0 14px;
+  font: 600 18px/1.2 Arial, sans-serif;
+}
+.bill-container {
+  box-sizing: border-box;
+  width: 80mm;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 4mm;
+  background: #fff;
+  color: #000;
+  font: 12px/1.35 Arial, sans-serif;
+  overflow-wrap: anywhere;
+}
+.bill-container .bill-header { text-align: center; }
+.bill-container .bill-header strong { display: block; font-size: 13px; }
+.bill-container .bill-header p,
+.bill-container .bill-meta p,
+.bill-container .bill-customer p,
+.bill-container .bill-footer p { margin: 2px 0; font: inherit; color: #000; }
+.bill-container .bill-section { border-top: 1px dashed #000; margin-top: 10px; padding-top: 10px; }
+.bill-container .bill-row { margin: 0 0 10px; break-inside: avoid; }
+.bill-container .bill-row-name { font-weight: 700; }
+.bill-container .bill-row-detail,
+.bill-container .bill-summary-line { display: flex; justify-content: space-between; gap: 8px; }
+.bill-container .bill-row-detail span:last-child,
+.bill-container .bill-summary-line strong { text-align: right; white-space: nowrap; }
+.bill-container .bill-option { font-size: 11px; }
+.bill-container .bill-total { font-size: 13px; font-weight: 700; }
+.bill-container .bill-customer strong { display: block; }
+.bill-container .bill-footer { text-align: center; }
+.bill-actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
+.bill-actions .button { flex: 1; justify-content: center; margin: 0; }
+
+@page { size: 80mm 297mm; margin: 0; }
+@page { size: 80mm auto; margin: 0; }
+@media print {
+  html, body { width: 80mm !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background: #fff !important; }
+  body > :not(#bill-dialog) { display: none !important; }
+  dialog::backdrop { display: none !important; }
+  #bill-dialog {
+    display: block !important;
+    position: static !important;
+    width: 80mm !important;
+    max-width: 80mm !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    overflow: visible !important;
+  }
+  #bill-dialog-title, .bill-actions { display: none !important; }
+  #billArea { width: 80mm !important; max-width: 80mm !important; margin: 0 !important; }
+}
