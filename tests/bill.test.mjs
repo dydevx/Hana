@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { getCartItems, calculateBill, billDetails, createBillLink, readBillLink } from '../assets/js/bill.js';
+import { getCartItems, calculateBill, billDetails, createBillLink, createLegacyBillLink, readBillLink } from '../assets/js/bill.js';
 
 const items = new Map([
   ['a', {number:'1', name:'Udon', variant:'Garnelen', quantityLabel:'1 Portion', priceCents:1250}],
@@ -22,19 +22,23 @@ test('Bill date, time and display number use restaurant local time', () => {
   });
 });
 
-test('Print link carries a Unicode order snapshot and rejects damaged data', () => {
+test('Compact print link carries a Unicode order snapshot and rejects damaged data', async () => {
   const snapshot={
     version:1,
     details:billDetails(new Date('2026-09-19T12:35:01.042Z')),
     rows:getCartItems([{id:'a',quantity:2}],items),
     customer:{name:'Nguyễn Müller',phone:'+49 123456',date:'2026-09-20',time:'12:30',notes:'Ohne Zwiebeln'}
   };
-  const link=createBillLink(snapshot,'https://example.com/order?tracking=1#speisekarte');
+  const link=await createBillLink(snapshot,'https://example.com/order?tracking=1#speisekarte');
   const url=new URL(link);
   assert.equal(url.search,'');
-  assert.deepEqual(readBillLink(url.hash),snapshot);
-  assert.equal(readBillLink('#bill=broken'),null);
-  assert.equal(readBillLink('#speisekarte'),null);
+  assert.match(url.hash,/^#bill2=[A-Za-z0-9_-]+$/);
+  assert.ok(link.length < createLegacyBillLink(snapshot,'https://example.com/order').length * .75);
+  assert.deepEqual(await readBillLink(url.hash),snapshot);
+  assert.deepEqual(await readBillLink(new URL(createLegacyBillLink(snapshot,'https://example.com/order')).hash),snapshot);
+  assert.equal(await readBillLink('#bill2=broken'),null);
+  assert.equal(await readBillLink('#bill=broken'),null);
+  assert.equal(await readBillLink('#speisekarte'),null);
   const changed={...snapshot,rows:[{...snapshot.rows[0],lineTotalCents:1}]};
-  assert.equal(readBillLink(new URL(createBillLink(changed,'https://example.com/')).hash),null);
+  assert.equal(await readBillLink(new URL(createLegacyBillLink(changed,'https://example.com/')).hash),null);
 });

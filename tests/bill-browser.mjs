@@ -97,8 +97,9 @@ try {
   await page.locator('#order-form [type="submit"]').click();
   await expect(page.locator('#order-review')).toBeVisible();
   const message=await page.locator('#order-message').textContent();
-  const printLink=message.match(/https?:\/\/\S+#bill=[A-Za-z0-9_-]+/)?.[0];
+  const printLink=message.match(/https?:\/\/\S+#bill2=[A-Za-z0-9_-]+/)?.[0];
   assert.ok(printLink, 'Order email must contain a print link');
+  assert.ok(printLink.length < 550, `Print link is too long for this sample order: ${printLink.length}`);
   const whatsApp=new URL(await page.locator('#send-order').getAttribute('href'));
   assert.equal(whatsApp.origin,'https://wa.me');
   assert.equal(whatsApp.pathname,'/4915257186870');

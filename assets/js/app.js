@@ -180,9 +180,11 @@ function prepareBillPrint() {
 }
 function printBill() { if($('#bill-dialog').open){prepareBillPrint();window.print();} }
 function closeBill() { $('#bill-dialog').close(); if($('#cart-dialog').open && !$('#create-bill').hidden) $('#create-bill').focus(); }
-function openBillFromLink() {
- if(!location.hash.startsWith('#bill='))return;
- const snapshot=readBillLink(location.hash);
+async function openBillFromLink() {
+ if(!/^#bill2?=/.test(location.hash))return;
+ const hash=location.hash;
+ const snapshot=await readBillLink(hash);
+ if(location.hash!==hash)return;
  if(!snapshot){notify('Der Drucklink ist ungültig oder beschädigt.');return;}
  renderBill(calculateBill(snapshot.rows),snapshot.details,snapshot.customer);
  if(!$('#bill-dialog').open)$('#bill-dialog').showModal();
@@ -199,13 +201,13 @@ function updateSlots(){const select=form.elements.time;const previous=select.val
 $('#checkout-button').addEventListener('click',()=>{if(!cart.length)return;$('#checkout').hidden=false;$('#order-review').hidden=true;const today=germanNow().date;form.elements.date.min=today;if(!form.elements.date.value||form.elements.date.value<today)form.elements.date.value=pickupSlots(today).length?today:addDays(today,1);updateSlots();form.elements.name.focus();});
 form.elements.date.addEventListener('change',updateSlots);
 let message='';
-form.addEventListener('submit',event=>{
+form.addEventListener('submit',async event=>{
  event.preventDefault();$('#form-error').textContent='';const data=Object.fromEntries([...new FormData(form)].map(([key,value])=>[key,value.trim()]));
  if(!cart.length){$('#form-error').textContent='Bitte wählen Sie zuerst ein Gericht.';return;}
  if(data.name.length<2 || !/^[+\d() /-]{6,30}$/.test(data.phone)){ $('#form-error').textContent='Bitte geben Sie Ihren vollständigen Namen und eine gültige Telefonnummer ein.';return; }
  if(!pickupSlots(data.date).includes(data.time)){$('#form-error').textContent='Bitte wählen Sie eine verfügbare Abholzeit innerhalb unserer Öffnungszeiten.';updateSlots();return;}
  const snapshot={version:1,details:billDetails(new Date()),rows:getCartItems(cart,items),customer:{name:data.name,phone:data.phone,date:data.date,time:data.time,notes:data.notes}};
- const billLink=createBillLink(snapshot,location.href);
+ const billLink=await createBillLink(snapshot,location.href);
  message=orderMessage(data,cart,items,billLink);$('#order-message').textContent=message;
  const send=$('#send-order');
  send.href=whatsAppOrderLink(config.WHATSAPP_NUMBER,message);
