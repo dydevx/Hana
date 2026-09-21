@@ -38,11 +38,14 @@ try {
   await order.locator('[name=time]').selectOption('12:30');
   await order.locator('[name=notes]').fill('Test – nicht senden. Ohne Koriander? + #1;');
   await order.locator('[type=submit]').click();
+  await expect(page.locator('#order-review')).toBeVisible();
   const orderMessage=await page.locator('#order-message').textContent();
   const orderHref=await page.locator('#send-order').getAttribute('href');
+  const sharedOrderMessage=new URL(orderHref).searchParams.get('text');
   assert.equal(new URL(orderHref).origin,'https://wa.me');
   assert.equal(new URL(orderHref).pathname,`/${WHATSAPP_NUMBER.replace(/\D/g,'')}`);
-  assert.equal(new URL(orderHref).searchParams.get('text'),orderMessage);
+  assert.ok(sharedOrderMessage.startsWith(orderMessage));
+  assert.ok(sharedOrderMessage.includes(await page.locator('#order-bill-link').getAttribute('href')));
   const orderPopupPromise=name==='desktop'?context.waitForEvent('page'):null;
   await page.locator('#send-order').click();
   if(orderPopupPromise){
@@ -50,7 +53,7 @@ try {
    const compose=new URL(popup.url());
    assert.equal(compose.origin,'https://wa.me');
    assert.equal(compose.pathname,`/${WHATSAPP_NUMBER.replace(/\D/g,'')}`);
-   assert.equal(compose.searchParams.get('text'),orderMessage);
+   assert.equal(compose.searchParams.get('text'),sharedOrderMessage);
    await popup.close();
   }else{
    assert.equal(await page.evaluate(()=>window.emailLaunches.length),1);

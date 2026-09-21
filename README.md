@@ -26,9 +26,11 @@ Customers can search by name, number or ingredient, filter vegetarian/spicy choi
 
 The restaurant can open the print link on another device and choose 80 mm or 58 mm in the bill dialog before selecting its printer in the browser print dialog.
 
+The order review displays “Bestellbeleg öffnen und drucken” instead of exposing the raw encoded URL. WhatsApp and copied messages contain a self-contained link such as `https://www.hana-japanisches-restaurant.com/#bill2=...`; the compressed fragment contains the receipt and is not sent to the web server. No bill database or server-side storage is used. Copied messages can be pasted into Zalo. If an embedded browser cannot print, the bill provides instructions for opening it in Chrome/Safari and a copy-link fallback. Localhost links only work on the originating computer. Native WhatsApp/Zalo printing and physical printers have not been tested.
+
 The reservation form collects party size, date/time, name, phone, optional email and wishes. A valid submit immediately attempts to open Gmail web on desktop, the default Mail app on iPhone/iPad, or Gmail on Android. The email-app chooser remains available for reopening or selecting another app. iPhone/iPad also offers Gmail via its app URL scheme; Android uses a Gmail-targeted intent with a Gmail web fallback. Mobile has an explicit Gmail web link if an app cannot open. Reservations are addressed to `info@hana84.co`. It never claims the restaurant has received or accepted a booking. Personal details are not written to localStorage. Only dish IDs and quantities persist.
 
-The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widget. HANA has no verified Resmio account/widget URL in this workspace. Orders open a prefilled WhatsApp chat to `+4915257186870`; reservations use an email chooser with prefilled messages to `info@hana84.co`. Customers send the prepared request themselves and wait for confirmation.
+The Mai Wok reference uses email/WhatsApp ordering and a Resmio reservation widget. HANA has no verified Resmio account/widget URL in this workspace. Orders open a prefilled WhatsApp chat to `+49 1525 7186870`; reservations use an email chooser with prefilled messages to `info@hana84.co`. Customers send the prepared request themselves and wait for confirmation.
 
 ## Editing
 
@@ -59,13 +61,11 @@ Run `npm run build` after edits. The opening schedule retains the previously sup
 
 ## Deployment
 
-All browser paths are relative and work under a GitHub Pages repository subpath. Set `SITE_URL` to the actual public base URL before building so canonical, social tags and sitemap match deployment.
+`SITE_URL` is set to `https://www.hana-japanisches-restaurant.com`. The site is fully static: bill data is compressed into the URL fragment and decoded in the browser, so deployment needs no receipt API, database, Redis account, or server-side storage.
 
-**Vercel:** import the repository; `vercel.json` defines `npm run build` and output `dist`. No deployment has been performed.
+**GitHub Pages:** the Pages workflow builds and publishes `dist/`. The repository `CNAME` configures `www.hana-japanisches-restaurant.com`. The domain currently uses a Webcake wrapper that does not pass the receipt fragment into its iframe; point the `www` CNAME directly to `dydevx.github.io` and configure the same custom domain in GitHub Pages. See `DOMAIN-DEPLOYMENT.md`.
 
-**GitHub Pages:** choose GitHub Actions as Pages source, then manually run the included workflow. It publishes `dist/`. The workflow is manual to keep incomplete menu/legal content from being automatically published.
-
-You can also upload only the contents of `dist/` to any static host. Node and development dependencies are unnecessary in production.
+**Local development:** run `npm run dev` and open `http://127.0.0.1:3000/`. A receipt link created there contains `127.0.0.1` and therefore cannot open from another phone. Use the deployed HTTPS domain for WhatsApp/Zalo testing across devices.
 
 ## Verification
 

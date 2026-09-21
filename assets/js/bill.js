@@ -67,6 +67,7 @@ function validateSnapshot(snapshot) {
   if (!snapshot.details || !/^ORD-\d{8}-\d{6}-\d{3}$/.test(snapshot.details.number) ||
       !/^\d{2}\.\d{2}\.\d{4}$/.test(snapshot.details.date) || !/^\d{2}:\d{2}$/.test(snapshot.details.time)) return null;
   if (snapshot.rows.some(row =>
+    !row || typeof row !== 'object' ||
     typeof row.number !== 'string' || row.number.length > 20 ||
     typeof row.name !== 'string' || !row.name || row.name.length > 200 ||
     typeof row.variant !== 'string' || row.variant.length > 200 ||

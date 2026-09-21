@@ -130,7 +130,11 @@ $('#menu-prev')?.addEventListener('click',()=>{if(menuPage>1){menuPage--;filterM
 $('#menu-next')?.addEventListener('click',()=>{menuPage++;filterMenu();$('#menu-content').scrollIntoView({block:'start'});});
 filterMenu();
 const form=$('#order-form');
+let currentBillLink='';
+let currentBillSnapshot=null;
 function renderBill(bill, details, customer) {
+ $('#bill-print-status').textContent='';
+ $('#bill-link-fallback').hidden=true;
  const rowHTML=bill.rows.map(row=>`
   <div class="bill-row">
    <div class="bill-row-name">${row.quantity} × ${e(row.number)}. ${e(row.name)}</div>
@@ -161,7 +165,10 @@ function createBill() {
  const rows=getCartItems(cart,items);
  if(!rows.length){notify('Ihr Warenkorb ist leer.');return;}
  const customer=$('#checkout').hidden?{}:Object.fromEntries(['name','phone','date','time','notes'].map(key=>[key,form.elements[key].value.trim()]));
- renderBill(calculateBill(rows),billDetails(new Date()),customer);
+ const details=billDetails(new Date());
+ currentBillLink='';
+ currentBillSnapshot={version:1,details,rows,customer:Object.fromEntries(['name','phone','date','time','notes'].map(key=>[key,customer[key]||'']))};
+ renderBill(calculateBill(rows),details,customer);
  $('#bill-dialog').showModal();
 }
 function setBillPaperWidth() {
@@ -178,7 +185,18 @@ function prepareBillPrint() {
  const heightMm=Math.ceil($('#billArea').scrollHeight*25.4/96)+5;
  pageSize.textContent=`@page { size: ${widthMm}mm ${heightMm}mm; margin: 0; }`;
 }
-function printBill() { if($('#bill-dialog').open){prepareBillPrint();window.print();} }
+function printBill() {
+ if(!$('#bill-dialog').open)return;
+ const status=$('#bill-print-status');
+ status.textContent='Kein Druckdialog? Öffnen Sie diesen Beleg über das App-Menü in Chrome oder Safari und tippen Sie dort auf „Drucken“.';
+ try {
+  prepareBillPrint();
+  if(typeof window.print!=='function')throw new Error('Printing unavailable');
+  window.print();
+ } catch {
+  status.textContent='Dieser Browser kann nicht drucken. Öffnen Sie den Beleg über das App-Menü in Chrome oder Safari. Alternativ können Sie den Beleglink kopieren.';
+ }
+}
 function closeBill() { $('#bill-dialog').close(); if($('#cart-dialog').open && !$('#create-bill').hidden) $('#create-bill').focus(); }
 async function openBillFromLink() {
  if(!/^#bill2?=/.test(location.hash))return;
@@ -186,6 +204,8 @@ async function openBillFromLink() {
  const snapshot=await readBillLink(hash);
  if(location.hash!==hash)return;
  if(!snapshot){notify('Der Drucklink ist ungültig oder beschädigt.');return;}
+ currentBillLink=location.href;
+ currentBillSnapshot=snapshot;
  renderBill(calculateBill(snapshot.rows),snapshot.details,snapshot.customer);
  if(!$('#bill-dialog').open)$('#bill-dialog').showModal();
 }
@@ -193,6 +213,20 @@ $('#create-bill').addEventListener('click',createBill);
 $('#bill-paper-width').addEventListener('change',setBillPaperWidth);
 setBillPaperWidth();
 $('#print-bill').addEventListener('click',printBill);
+$('#copy-bill-link').addEventListener('click',async()=>{
+ if(!currentBillLink && currentBillSnapshot){
+  try { currentBillLink=await createBillLink(currentBillSnapshot,location.href); }
+  catch(error) { $('#bill-print-status').textContent=error.message;return; }
+ }
+ try {
+  if(!currentBillLink)return;
+  await navigator.clipboard.writeText(currentBillLink);
+  $('#bill-print-status').textContent='Beleglink kopiert. Öffnen Sie ihn zum Drucken in Chrome oder Safari.';
+ } catch {
+  const field=$('#bill-link-fallback');field.hidden=false;field.value=currentBillLink;field.focus();field.select();
+  $('#bill-print-status').textContent='Bitte kopieren Sie den markierten Link und öffnen Sie ihn in Chrome oder Safari.';
+ }
+});
 $('#close-bill').addEventListener('click',closeBill);
 window.addEventListener('beforeprint',prepareBillPrint);
 window.addEventListener('hashchange',openBillFromLink);
@@ -208,13 +242,25 @@ form.addEventListener('submit',async event=>{
  if(!pickupSlots(data.date).includes(data.time)){$('#form-error').textContent='Bitte wählen Sie eine verfügbare Abholzeit innerhalb unserer Öffnungszeiten.';updateSlots();return;}
  const snapshot={version:1,details:billDetails(new Date()),rows:getCartItems(cart,items),customer:{name:data.name,phone:data.phone,date:data.date,time:data.time,notes:data.notes}};
  const billLink=await createBillLink(snapshot,location.href);
- message=orderMessage(data,cart,items,billLink);$('#order-message').textContent=message;
+ currentBillLink=billLink;currentBillSnapshot=snapshot;
+ message=orderMessage(data,cart,items,billLink);$('#order-message').textContent=orderMessage(data,cart,items);
+ $('#order-copy-fallback').hidden=true;
+ $('#order-bill-link').href=billLink;
  const send=$('#send-order');
  send.href=whatsAppOrderLink(config.WHATSAPP_NUMBER,message);
  $('#checkout').hidden=true;$('#order-review').hidden=false;$('#cart-items').hidden=true;$('#cart-footer').hidden=true;$('#create-bill').hidden=true;
  const reviewTitle=$('#order-review h3');reviewTitle.tabIndex=-1;reviewTitle.focus({preventScroll:true});$('#cart-dialog').scrollTop=0;
 });
-$('#copy-order').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(message);$('#order-copy-status').textContent='Bestellung kopiert.';}catch{const range=document.createRange();range.selectNodeContents($('#order-message'));const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);$('#order-copy-status').textContent='Bitte kopieren Sie den markierten Bestelltext.';}});
+$('#order-bill-link').addEventListener('click',async event=>{
+ event.preventDefault();
+ const link=$('#order-bill-link').href;
+ const snapshot=currentBillSnapshot || await readBillLink(new URL(link).hash);
+ if(!snapshot){notify('Der Drucklink ist ungültig oder beschädigt.');return;}
+ currentBillLink=link;currentBillSnapshot=snapshot;
+ renderBill(calculateBill(snapshot.rows),snapshot.details,snapshot.customer);
+ $('#bill-dialog').showModal();
+});
+$('#copy-order').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(message);$('#order-copy-status').textContent='Bestellung mit Beleglink kopiert. Sie können sie in WhatsApp oder Zalo einfügen.';}catch{const field=$('#order-copy-fallback');field.hidden=false;field.value=message;field.focus();field.select();$('#order-copy-status').textContent='Bitte kopieren Sie den markierten Bestelltext einschließlich Beleglink.';}});
 $('#send-order').addEventListener('click',event=>{if(!pickupSlots(form.elements.date.value).includes(form.elements.time.value)){event.preventDefault();renderCart();$('#order-review').hidden=true;$('#checkout').hidden=false;$('#create-bill').hidden=false;$('#form-error').textContent='Die gewählte Abholzeit ist nicht mehr verfügbar. Bitte wählen Sie eine neue Zeit.';updateSlots();form.elements.time.focus();}});
 $('#edit-order').addEventListener('click',()=>{renderCart();$('#order-review').hidden=true;$('#checkout').hidden=false;$('#create-bill').hidden=false;form.elements.name.focus();});
 window.addEventListener('storage',event=>{if(event.key!==storageKey)return;try{cart=sanitizeCart(JSON.parse(event.newValue||'[]'),items);resetCheckout();renderCart();}catch{}});
