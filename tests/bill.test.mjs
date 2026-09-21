@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { getCartItems, calculateBill, billDetails, createBillLink, createLegacyBillLink, readBillLink } from '../assets/js/bill.js';
+import { getCartItems, calculateBill, billDetails, billPageUrl, createBillLink, createLegacyBillLink, readBillLink } from '../assets/js/bill.js';
 
 const items = new Map([
   ['a', {number:'1', name:'Udon', variant:'Garnelen', quantityLabel:'1 Portion', priceCents:1250}],
@@ -20,6 +20,14 @@ test('Bill date, time and display number use restaurant local time', () => {
   assert.deepEqual(billDetails(new Date('2026-09-19T12:35:01.042Z')), {
     number:'ORD-20260919-143501-042', date:'19.09.2026', time:'14:35'
   });
+});
+
+test('Published receipts bypass the Webcake iframe while local tests stay local', () => {
+  const published='https://dydevx.github.io/Hana/';
+  assert.equal(billPageUrl('https://www.hana-japanisches-restaurant.com/#speisekarte',published),published);
+  assert.equal(billPageUrl('https://dydevx.github.io/Hana/#speisekarte',published),published);
+  assert.equal(billPageUrl('http://127.0.0.1:3000/#speisekarte',published),'http://127.0.0.1:3000/#speisekarte');
+  assert.equal(billPageUrl('http://localhost:3000/',published),'http://localhost:3000/');
 });
 
 test('Compact print link carries a Unicode order snapshot and rejects damaged data', async () => {

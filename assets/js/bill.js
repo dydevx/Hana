@@ -43,6 +43,11 @@ function decodeToken(token) {
   return Uint8Array.from(binary, character => character.charCodeAt(0));
 }
 
+export function billPageUrl(currentUrl, publishedUrl) {
+  const current = new URL(currentUrl);
+  return ['localhost', '127.0.0.1', '[::1]'].includes(current.hostname) ? current.href : publishedUrl;
+}
+
 // Keep customer details in the fragment, outside HTTP requests and server logs.
 // The compact, compressed format avoids overly long links in chat applications.
 export async function createBillLink(snapshot, pageUrl) {

@@ -61,9 +61,11 @@ Run `npm run build` after edits. The opening schedule retains the previously sup
 
 ## Deployment
 
-`SITE_URL` is set to `https://www.hana-japanisches-restaurant.com`. The site is fully static: bill data is compressed into the URL fragment and decoded in the browser, so deployment needs no receipt API, database, Redis account, or server-side storage.
+`SITE_URL` is set to `https://www.hana-japanisches-restaurant.com`. Shared receipt links use `BILL_PAGE_URL` (`https://dydevx.github.io/Hana/`) so the `#bill2` fragment reaches the app directly instead of stopping at the Webcake iframe. The site is fully static: bill data is compressed into the URL fragment and decoded in the browser, so deployment needs no receipt API, database, Redis account, or server-side storage.
 
 **GitHub Pages:** the Pages workflow builds and publishes `dist/` at `https://dydevx.github.io/Hana/`. The GitHub Pages custom domain is intentionally disabled while the official domain still uses a Webcake iframe; enabling both at once creates a redirect loop. See `DOMAIN-DEPLOYMENT.md` before switching the domain to GitHub Pages directly.
+
+**Webcake iframe:** paste `WEBCAKE-IFRAME.html` into the Webcake HTML box. It forwards existing `#bill` and `#bill2` receipt fragments to GitHub Pages while leaving ordinary section navigation inside the embedded site.
 
 **Local development:** run `npm run dev` and open `http://127.0.0.1:3000/`. A receipt link created there contains `127.0.0.1` and therefore cannot open from another phone. Use the deployed HTTPS domain for WhatsApp/Zalo testing across devices.
 

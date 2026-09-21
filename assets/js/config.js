@@ -12,6 +12,8 @@ export const MAP_EMBED_URL = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m
 export const FACEBOOK_URL = 'https://www.facebook.com/hana.restaurant.olsberg/'; // Exact link from /hana-4.
 export const INSTAGRAM_URL = '';
 export const SITE_URL = 'https://www.hana-japanisches-restaurant.com';
+// Receipt links bypass the Webcake iframe so URL fragments reach the GitHub Pages app.
+export const BILL_PAGE_URL = 'https://dydevx.github.io/Hana/';
 export const MENU_PDF_URL = 'assets/menu/speisekarte.pdf'; // Supplied MENU.pdf.
 export const RESERVATION_LEAD_MINUTES = 30;
 export const RESERVATION_DURATION_MINUTES = 60;

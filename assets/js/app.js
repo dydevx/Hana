@@ -3,11 +3,12 @@ import { MENU } from './menu.js';
 import { money, escapeHTML as e, germanNow, addDays, isOpen, pickupSlots, sanitizeCart, cartTotal, orderMessage, whatsAppOrderLink } from './core.js';
 import { initMotion } from './motion.js';
 import { initReservation } from './reservation.js';
-import { getCartItems, calculateBill, billDetails, createBillLink, readBillLink } from './bill.js';
+import { getCartItems, calculateBill, billDetails, billPageUrl, createBillLink, readBillLink } from './bill.js';
 const $=selector=>document.querySelector(selector);
 const $$=selector=>[...document.querySelectorAll(selector)];
 const items=new Map((MENU.verified?MENU.categories:[]).flatMap(category=>category.items).map(item=>[item.id,item]));
 const storageKey='hana-cart-v1';
+const receiptPageUrl=()=>billPageUrl(location.href,config.BILL_PAGE_URL);
 let cart=[];
 let timer;
 function notify(message){$('#toast').textContent=message;$('#toast').classList.add('visible');clearTimeout(timer);timer=setTimeout(()=>$('#toast').classList.remove('visible'),3500);}
@@ -215,7 +216,7 @@ setBillPaperWidth();
 $('#print-bill').addEventListener('click',printBill);
 $('#copy-bill-link').addEventListener('click',async()=>{
  if(!currentBillLink && currentBillSnapshot){
-  try { currentBillLink=await createBillLink(currentBillSnapshot,location.href); }
+  try { currentBillLink=await createBillLink(currentBillSnapshot,receiptPageUrl()); }
   catch(error) { $('#bill-print-status').textContent=error.message;return; }
  }
  try {
@@ -241,7 +242,7 @@ form.addEventListener('submit',async event=>{
  if(data.name.length<2 || !/^[+\d() /-]{6,30}$/.test(data.phone)){ $('#form-error').textContent='Bitte geben Sie Ihren vollständigen Namen und eine gültige Telefonnummer ein.';return; }
  if(!pickupSlots(data.date).includes(data.time)){$('#form-error').textContent='Bitte wählen Sie eine verfügbare Abholzeit innerhalb unserer Öffnungszeiten.';updateSlots();return;}
  const snapshot={version:1,details:billDetails(new Date()),rows:getCartItems(cart,items),customer:{name:data.name,phone:data.phone,date:data.date,time:data.time,notes:data.notes}};
- const billLink=await createBillLink(snapshot,location.href);
+ const billLink=await createBillLink(snapshot,receiptPageUrl());
  currentBillLink=billLink;currentBillSnapshot=snapshot;
  message=orderMessage(data,cart,items,billLink);$('#order-message').textContent=orderMessage(data,cart,items);
  $('#order-copy-fallback').hidden=true;

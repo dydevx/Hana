@@ -1,0 +1,51 @@
+<!-- Paste this whole block into the Webcake HTML box. -->
+<div class="iframe-wrap">
+  <iframe id="hana-frame" title="HANA Japanisches Restaurant" frameborder="0" allowfullscreen></iframe>
+</div>
+
+<script>
+  (() => {
+    const frame = document.getElementById('hana-frame');
+    const githubPage = 'https://dydevx.github.io/Hana/';
+
+    function syncFrameUrl() {
+      const target = new URL(githubPage);
+      // A receipt is stored in #bill2=...; Webcake must explicitly forward it.
+      if (/^#bill2?=/.test(window.location.hash)) target.hash = window.location.hash;
+      frame.src = target.toString();
+    }
+
+    syncFrameUrl();
+    window.addEventListener('hashchange', syncFrameUrl);
+  })();
+</script>
+
+<style>
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: 100% !important;
+    overflow: hidden !important;
+    background: #191817 !important;
+  }
+
+  .iframe-wrap {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #191817;
+    z-index: 999999;
+  }
+
+  .iframe-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    border: 0;
+    display: block;
+  }
+</style>

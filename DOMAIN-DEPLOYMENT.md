@@ -8,7 +8,8 @@ Target URL: `https://www.hana-japanisches-restaurant.com`
 - `www` currently points to `dns.webcake.io`.
 - Webcake displays `https://dydevx.github.io/Hana/` inside an iframe.
 - The GitHub Pages custom domain and repository `CNAME` are disabled so the iframe URL does not redirect back to Webcake.
-- A URL fragment such as `#bill2=...` stays on the outer Webcake page and is not passed into that iframe, so a shared receipt cannot open there.
+- Shared receipt links currently target `https://dydevx.github.io/Hana/` directly so `#bill2=...` reaches the app.
+- `WEBCAKE-IFRAME.html` is the ready-to-paste Webcake embed and also forwards custom-domain receipt fragments to the iframe.
 
 The official domain must serve the GitHub Pages site directly. No receipt API, database, Redis account, or server-side bill storage is required. Each receipt is compressed into its own URL fragment.
 
