@@ -26,7 +26,7 @@ Customers can search by name, number or ingredient, filter vegetarian/spicy choi
 
 The restaurant can open the print link on another device and choose 80 mm or 58 mm in the bill dialog before selecting its printer in the browser print dialog.
 
-The order review displays “Bestellbeleg öffnen und drucken” instead of exposing the raw encoded URL. WhatsApp and copied messages contain a self-contained link such as `https://www.hana-japanisches-restaurant.com/#bill2=...`; the compressed fragment contains the receipt and is not sent to the web server. No bill database or server-side storage is used. Copied messages can be pasted into Zalo. If an embedded browser cannot print, the bill provides instructions for opening it in Chrome/Safari and a copy-link fallback. Localhost links only work on the originating computer. Native WhatsApp/Zalo printing and physical printers have not been tested.
+The order review displays “Bestellbeleg öffnen und drucken” instead of exposing the raw encoded URL. WhatsApp and copied messages contain a self-contained `#b3=` link with a compact binary receipt and corruption check; it is typically less than half the length of the previous `#bill2=` format. The fragment is not sent to the web server. Existing `#bill=` and `#bill2=` links remain readable. No bill database or server-side storage is used. Copied messages can be pasted into Zalo. If an embedded browser cannot print, the bill provides instructions for opening it in Chrome/Safari and a copy-link fallback. Localhost links only work on the originating computer. Native WhatsApp/Zalo printing and physical printers have not been tested.
 
 The reservation form collects party size, date/time, name, phone, optional email and wishes. A valid submit immediately attempts to open Gmail web on desktop, the default Mail app on iPhone/iPad, or Gmail on Android. The email-app chooser remains available for reopening or selecting another app. iPhone/iPad also offers Gmail via its app URL scheme; Android uses a Gmail-targeted intent with a Gmail web fallback. Mobile has an explicit Gmail web link if an app cannot open. Reservations are addressed to `info@hana84.co`. It never claims the restaurant has received or accepted a booking. Personal details are not written to localStorage. Only dish IDs and quantities persist.
 
@@ -61,11 +61,11 @@ Run `npm run build` after edits. The opening schedule retains the previously sup
 
 ## Deployment
 
-`SITE_URL` is set to `https://www.hana-japanisches-restaurant.com`. Shared receipt links use `BILL_PAGE_URL` (`https://dydevx.github.io/Hana/`) so the `#bill2` fragment reaches the app directly instead of stopping at the Webcake iframe. The site is fully static: bill data is compressed into the URL fragment and decoded in the browser, so deployment needs no receipt API, database, Redis account, or server-side storage.
+`SITE_URL` is set to `https://www.hana-japanisches-restaurant.com`. Shared receipt links use `BILL_PAGE_URL` (`https://dydevx.github.io/Hana/`) so the receipt fragment reaches the app directly instead of stopping at the Webcake iframe. The site is fully static: bill data is encoded into the URL fragment and decoded in the browser, so deployment needs no receipt API, database, Redis account, or server-side storage.
 
 **GitHub Pages:** the Pages workflow builds and publishes `dist/` at `https://dydevx.github.io/Hana/`. The GitHub Pages custom domain is intentionally disabled while the official domain still uses a Webcake iframe; enabling both at once creates a redirect loop. See `DOMAIN-DEPLOYMENT.md` before switching the domain to GitHub Pages directly.
 
-**Webcake iframe:** paste `WEBCAKE-IFRAME.html` into the Webcake HTML box. It forwards existing `#bill` and `#bill2` receipt fragments to GitHub Pages while leaving ordinary section navigation inside the embedded site.
+**Webcake iframe:** paste `WEBCAKE-IFRAME.html` into the Webcake HTML box. It forwards `#b3`, `#bill` and `#bill2` receipt fragments to GitHub Pages while leaving ordinary section navigation inside the embedded site.
 
 **Local development:** run `npm run dev` and open `http://127.0.0.1:3000/`. A receipt link created there contains `127.0.0.1` and therefore cannot open from another phone. Use the deployed HTTPS domain for WhatsApp/Zalo testing across devices.
 

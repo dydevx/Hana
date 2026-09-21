@@ -200,9 +200,9 @@ function printBill() {
 }
 function closeBill() { $('#bill-dialog').close(); if($('#cart-dialog').open && !$('#create-bill').hidden) $('#create-bill').focus(); }
 async function openBillFromLink() {
- if(!/^#bill2?=/.test(location.hash))return;
+ if(!/^#(?:b3|bill2?)=/.test(location.hash))return;
  const hash=location.hash;
- const snapshot=await readBillLink(hash);
+ const snapshot=await readBillLink(hash,items);
  if(location.hash!==hash)return;
  if(!snapshot){notify('Der Drucklink ist ungültig oder beschädigt.');return;}
  currentBillLink=location.href;
@@ -255,7 +255,7 @@ form.addEventListener('submit',async event=>{
 $('#order-bill-link').addEventListener('click',async event=>{
  event.preventDefault();
  const link=$('#order-bill-link').href;
- const snapshot=currentBillSnapshot || await readBillLink(new URL(link).hash);
+ const snapshot=currentBillSnapshot || await readBillLink(new URL(link).hash,items);
  if(!snapshot){notify('Der Drucklink ist ungültig oder beschädigt.');return;}
  currentBillLink=link;currentBillSnapshot=snapshot;
  renderBill(calculateBill(snapshot.rows),snapshot.details,snapshot.customer);

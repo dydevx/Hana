@@ -40,10 +40,15 @@ test('Compact print link carries a Unicode order snapshot and rejects damaged da
   const link=await createBillLink(snapshot,'https://example.com/order?tracking=1#speisekarte');
   const url=new URL(link);
   assert.equal(url.search,'');
-  assert.match(url.hash,/^#bill2=[A-Za-z0-9_-]+$/);
-  assert.ok(link.length < createLegacyBillLink(snapshot,'https://example.com/order').length * .75);
-  assert.deepEqual(await readBillLink(url.hash),snapshot);
+  assert.match(url.hash,/^#b3=[A-Za-z0-9_-]+$/);
+  assert.ok(link.length < 150, `Binary receipt link is unexpectedly long: ${link.length}`);
+  assert.ok(link.length < createLegacyBillLink(snapshot,'https://example.com/order').length * .45);
+  assert.deepEqual(await readBillLink(url.hash,items),snapshot);
+  assert.equal(await readBillLink(url.hash),null);
+  const damaged=url.hash.slice(0,-1)+(url.hash.endsWith('A')?'B':'A');
+  assert.equal(await readBillLink(damaged,items),null);
   assert.deepEqual(await readBillLink(new URL(createLegacyBillLink(snapshot,'https://example.com/order')).hash),snapshot);
+  assert.equal(await readBillLink('#b3=broken',items),null);
   assert.equal(await readBillLink('#bill2=broken'),null);
   assert.equal(await readBillLink('#bill=broken'),null);
   assert.equal(await readBillLink('#speisekarte'),null);

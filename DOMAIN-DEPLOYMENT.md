@@ -8,7 +8,7 @@ Target URL: `https://www.hana-japanisches-restaurant.com`
 - `www` currently points to `dns.webcake.io`.
 - Webcake displays `https://dydevx.github.io/Hana/` inside an iframe.
 - The GitHub Pages custom domain and repository `CNAME` are disabled so the iframe URL does not redirect back to Webcake.
-- Shared receipt links currently target `https://dydevx.github.io/Hana/` directly so `#bill2=...` reaches the app.
+- Shared receipt links currently target `https://dydevx.github.io/Hana/` directly so the compact `#b3=...` fragment reaches the app.
 - `WEBCAKE-IFRAME.html` is the ready-to-paste Webcake embed and also forwards custom-domain receipt fragments to the iframe.
 
 The official domain must serve the GitHub Pages site directly. No receipt API, database, Redis account, or server-side bill storage is required. Each receipt is compressed into its own URL fragment.
@@ -18,7 +18,7 @@ The official domain must serve the GitHub Pages site directly. No receipt API, d
 - Add `CNAME` with `www.hana-japanisches-restaurant.com` only when the DNS change below is performed at the same time.
 - `SITE_URL` uses the official HTTPS domain.
 - `.github/workflows/pages.yml` builds and deploys `dist/` to GitHub Pages.
-- The receipt URL has the form `https://www.hana-japanisches-restaurant.com/#bill2=<compressed-data>`.
+- The receipt URL has the form `https://www.hana-japanisches-restaurant.com/#b3=<compact-data>`.
 
 ## Deployment steps
 
@@ -27,6 +27,6 @@ The official domain must serve the GitHub Pages site directly. No receipt API, d
 3. Push these files, then run the **Deploy HANA to GitHub Pages** workflow.
 4. Wait for GitHub to verify DNS and issue the TLS certificate, then enable **Enforce HTTPS**.
 5. Verify that the official URL loads the site directly, without a Webcake iframe.
-6. Place a test order and confirm that its WhatsApp message contains an HTTPS `#bill2=` link. Open it in another browser, confirm the bill popup appears, and press **Beleg drucken**.
+6. Place a test order and confirm that its WhatsApp message contains an HTTPS `#b3=` link. Open it in another browser, confirm the bill popup appears, and press **Beleg drucken**.
 
 Changing DNS affects the live domain. The existing Webcake wrapper will stop serving `www` after the CNAME change.

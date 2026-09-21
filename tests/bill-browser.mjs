@@ -98,15 +98,15 @@ try {
   await page.locator('#order-form [type="submit"]').click();
   await expect(page.locator('#order-review')).toBeVisible();
   const message=new URL(await page.locator('#send-order').getAttribute('href')).searchParams.get('text');
-  const printLink=message.match(/https?:\/\/\S+#bill2=[A-Za-z0-9_-]+/)?.[0];
+  const printLink=message.match(/https?:\/\/\S+#b3=[A-Za-z0-9_-]+/)?.[0];
   assert.ok(printLink, 'WhatsApp message must contain a self-contained print link');
-  assert.ok(printLink.length < 550, `Compressed print link is unexpectedly long: ${printLink.length}`);
+  assert.ok(printLink.length < 240, `Binary print link is unexpectedly long: ${printLink.length}`);
   const whatsApp=new URL(await page.locator('#send-order').getAttribute('href'));
   assert.equal(whatsApp.origin,'https://wa.me');
   assert.equal(whatsApp.pathname,`/${WHATSAPP_NUMBER.replace(/\D/g,'')}`);
   assert.equal(whatsApp.searchParams.get('text'),message);
   assert.equal(await page.locator('#order-bill-link').getAttribute('href'),printLink);
-  assert.ok(!(await page.locator('#order-message').textContent()).includes('#bill2='), 'Review exposes encoded URL');
+  assert.ok(!(await page.locator('#order-message').textContent()).includes('#b3='), 'Review exposes encoded URL');
   await page.locator('#order-review').screenshot({path:'test-results/order-review-compact.png'});
   await page.locator('#order-bill-link').click();
   await expect(page.locator('#billArea')).toContainText('44,00');

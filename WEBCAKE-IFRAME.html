@@ -10,8 +10,8 @@
 
     function syncFrameUrl() {
       const target = new URL(githubPage);
-      // A receipt is stored in #bill2=...; Webcake must explicitly forward it.
-      if (/^#bill2?=/.test(window.location.hash)) target.hash = window.location.hash;
+      // A receipt is stored in #b3=... (older #bill/#bill2 links also work).
+      if (/^#(?:b3|bill2?)=/.test(window.location.hash)) target.hash = window.location.hash;
       frame.src = target.toString();
     }
 
