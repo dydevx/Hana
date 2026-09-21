@@ -7,13 +7,14 @@ Target URL: `https://www.hana-japanisches-restaurant.com`
 - DNS is managed by `ns1.matbao.com` / `ns2.matbao.com`.
 - `www` currently points to `dns.webcake.io`.
 - Webcake displays `https://dydevx.github.io/Hana/` inside an iframe.
+- The GitHub Pages custom domain and repository `CNAME` are disabled so the iframe URL does not redirect back to Webcake.
 - A URL fragment such as `#bill2=...` stays on the outer Webcake page and is not passed into that iframe, so a shared receipt cannot open there.
 
 The official domain must serve the GitHub Pages site directly. No receipt API, database, Redis account, or server-side bill storage is required. Each receipt is compressed into its own URL fragment.
 
-## Prepared GitHub Pages setup
+## Future direct-domain setup
 
-- `CNAME` contains `www.hana-japanisches-restaurant.com` and is copied into `dist/` by the build.
+- Add `CNAME` with `www.hana-japanisches-restaurant.com` only when the DNS change below is performed at the same time.
 - `SITE_URL` uses the official HTTPS domain.
 - `.github/workflows/pages.yml` builds and deploys `dist/` to GitHub Pages.
 - The receipt URL has the form `https://www.hana-japanisches-restaurant.com/#bill2=<compressed-data>`.
